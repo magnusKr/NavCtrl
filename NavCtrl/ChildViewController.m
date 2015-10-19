@@ -8,6 +8,7 @@
 
 #import "ChildViewController.h"
 
+
 @interface ChildViewController ()
 
 @end
@@ -32,21 +33,15 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [self.tableView reloadData];
     
     [super viewWillAppear:animated];
     
-    if ([self.title isEqualToString:@"Apple mobile devices"]) {
-        self.products = [[NSArray alloc ]
-                 initWithObjects:@"iPad", @"iPod Touch",@"iPhone", nil];
-    } else {
-        self.products = [[NSArray alloc ]
-                 initWithObjects:@"Galaxy S4", @"Galaxy Note", @"Galaxy Tab", nil];
-    }
-    [self.tableView reloadData];
-}
+  }
 
 - (void)didReceiveMemoryWarning
 {
@@ -67,7 +62,9 @@
 {
 #warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return [self.products count];
+    
+    return[self.company.listOfCompanyProducts count];
+
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -78,69 +75,78 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    // Configure the cell...
-    
-    cell.textLabel.text = [self.products objectAtIndex:
-                           [indexPath row]];
+    Product *product = [self.company.listOfCompanyProducts objectAtIndex:[indexPath row]];
+    cell.textLabel.text = product.productName;
+    cell.imageView.image = [UIImage imageNamed:product.productImage];
+
     
     return cell;
 }
 
-/*
+
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
+   
     return YES;
 }
-*/
 
-/*
+
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [self.company.listOfCompanyProducts removeObjectAtIndex: [indexPath row]];
+        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+   // else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    //}
 }
-*/
 
-/*
+
+
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
+    Product *productToMove = [self.company.listOfCompanyProducts objectAtIndex:fromIndexPath.row];
+    [self.company.listOfCompanyProducts removeObjectAtIndex:fromIndexPath.row];
+    [self.company.listOfCompanyProducts insertObject:productToMove atIndex:toIndexPath.row];
 }
-*/
 
-/*
+
+
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the item to be re-orderable.
+  
     return YES;
 }
-*/
+
 
 /*
 #pragma mark - Table view delegate
 
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-
-    // Pass the selected object to the new view controller.
-    
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-}
  
  */
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    ProductsViewController *detailViewController = [[ProductsViewController alloc] initWithNibName:@"ProductsViewController" bundle:nil];
+    
+    Product *product = [self.company.listOfCompanyProducts objectAtIndex:[indexPath row]];
+    detailViewController.someUrlToLoad =  product.productUrl;
+
+    [self.navigationController pushViewController:detailViewController animated:YES];
+    
+    [detailViewController release];
+}
+
+
 
 @end

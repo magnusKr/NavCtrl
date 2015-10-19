@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ProductsViewController.h"
+#import "Company.h"
+
 
 @interface ChildViewController : UITableViewController
-@property (nonatomic, retain) NSArray *products;
+
+@property (nonatomic, retain) Company* company;
+
+
+
+
+
 @end
