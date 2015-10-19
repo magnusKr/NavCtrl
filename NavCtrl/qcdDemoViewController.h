@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DataAccess.h"
 
 
 @class ChildViewController;
@@ -14,6 +15,10 @@
 @interface qcdDemoViewController : UITableViewController
 
 @property (nonatomic, retain) NSMutableArray *companyList;
+//@property (nonatomic, retain) DataAccess* dataAccessObject;
+
+
+
 
 @property (nonatomic, retain) IBOutlet  ChildViewController * childVC;
 

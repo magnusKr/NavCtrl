@@ -53,14 +53,14 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+//#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
+//#warning Incomplete method implementation.
     // Return the number of rows in the section.
     
     return[self.company.listOfCompanyProducts count];
@@ -75,7 +75,8 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    Product *product = [self.company.listOfCompanyProducts objectAtIndex:[indexPath row]];
+    Product *product = [[DataAccess sharedData]getCompanyProducts:self.company :[indexPath row]];
+                        
     cell.textLabel.text = product.productName;
     cell.imageView.image = [UIImage imageNamed:product.productImage];
 
@@ -99,8 +100,8 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [self.company.listOfCompanyProducts removeObjectAtIndex: [indexPath row]];
         
+        [[DataAccess sharedData]deleteCompanyProducts:[indexPath row] :self.company];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
    // else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -113,10 +114,13 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    Product *productToMove = [self.company.listOfCompanyProducts objectAtIndex:fromIndexPath.row];
-    [self.company.listOfCompanyProducts removeObjectAtIndex:fromIndexPath.row];
-    [self.company.listOfCompanyProducts insertObject:productToMove atIndex:toIndexPath.row];
-}
+    Product *productToMove = [[DataAccess sharedData]getCompanyProducts:self.company :fromIndexPath.row];
+    
+    [[DataAccess sharedData]deleteCompanyProducts:fromIndexPath.row :self.company];
+    
+    [[DataAccess sharedData]insertCompanyProducts:self.company :productToMove :toIndexPath.row];
+    
+   }
 
 
 
@@ -139,7 +143,8 @@
 {
     ProductsViewController *detailViewController = [[ProductsViewController alloc] initWithNibName:@"ProductsViewController" bundle:nil];
     
-    Product *product = [self.company.listOfCompanyProducts objectAtIndex:[indexPath row]];
+    Product *product = [[DataAccess sharedData]getCompanyProducts:self.company :indexPath.row];
+    
     detailViewController.someUrlToLoad =  product.productUrl;
 
     [self.navigationController pushViewController:detailViewController animated:YES];

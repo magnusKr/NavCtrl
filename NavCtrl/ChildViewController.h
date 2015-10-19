@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "ProductsViewController.h"
-#import "Company.h"
+#import "qcdDemoViewController.h"
+
 
 
 @interface ChildViewController : UITableViewController

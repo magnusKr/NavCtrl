@@ -36,60 +36,11 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    
-    
-    Company *companyOne = [[Company alloc]initWithName:@"Apple mobile devices" andcompanyLogo:@"apple.png"];
-    Product *product1 = [[Product alloc]initWithProductName:@"iPad" andproductImage:@"iPad.png" andProductUrl:@"https://www.apple.com/shop/buy-ipad/ipad-air-2"];
-    
-    
-    Product *product2 = [[Product alloc]initWithProductName:@"iPod Touch" andproductImage:@"ipodtouch.png" andProductUrl:@"https://www.apple.com/shop/buy-iphone/iphone6"];
-    
-    Product *product3 = [[Product alloc]initWithProductName:@"iPhone" andproductImage:@"iphone.png" andProductUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
-    
-    companyOne.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product1,product2,product3, nil];
-    
-      Company *companyTwo = [[Company alloc]initWithName:@"Samsung mobile devices" andcompanyLogo: @"samsung.png"];
-    
-    Product *product4 = [[Product alloc]initWithProductName:@"Galaxy S4" andproductImage:@"galaxys4.png" andProductUrl:@"http://www.samsung.com/global/microsite/galaxys4/"];
-    
-    
-    Product *product5 = [[Product alloc]initWithProductName:@"Galaxy Note" andproductImage:@"galaxys5.png" andProductUrl:@"http://www.samsung.com/us/mobile/cell-phones/SM-G925TZDATMB"];
-    
-      Product *product6 = [[Product alloc]initWithProductName:@"Galaxy Tab" andproductImage:@"galaxys6.png" andProductUrl:@"http://www.samsung.com/us/mobile/cell-phones/SM-G925RZKAUSC"];
-    
-     companyTwo.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product4,product5,product6, nil];
-    
-    
-     Company *companyThree = [[Company alloc]initWithName:@"Motorola mobile devices" andcompanyLogo:@"motorola.png"];
-    
-    
-    
-    
-    Product *product7 = [[Product alloc]initWithProductName:@"X Pure Edition" andproductImage:@"motorola1.png" andProductUrl:@"https://www.motorola.com/us/products/moto-g"];
-    
-    
-    Product *product8 = [[Product alloc]initWithProductName:@"Moto E" andproductImage:@"motorola2.png" andProductUrl:@"http://www.motorola.com/us/products/moto-x-pure-edition"];
-    
-    Product *product9 = [[Product alloc]initWithProductName:@"Moto X" andproductImage:@"motorola3.jpeg" andProductUrl:@"https://www.motorola.com/us/smartphones/moto-e-2nd-gen/moto-e-2nd-gen.html"];
-    
-    companyThree.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product7,product8,product9, nil];
-    
-    
-    
-    Company *companyFour = [[Company alloc]initWithName:@"HTC mobile devices" andcompanyLogo:@"htc.png"];
-    
-    Product *product10 = [[Product alloc]initWithProductName:@"Desire 123" andproductImage:@"htc1.png" andProductUrl:@"http://www.htc.com/us/smartphones/htc-desire-626/"];
-    
-    
-    Product *product11 = [[Product alloc]initWithProductName:@"Desire 510" andproductImage:@"htc2.png" andProductUrl:@"http://www.htc.com/us/smartphones/htc-one-mini/"];
-    
-    Product *product12 = [[Product alloc]initWithProductName:@"Desire 237" andproductImage:@"htc3.png" andProductUrl:@"http://www.htc.com/us/smartphones/htc-one-max/"];
 
-      companyFour.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product10,product11,product12, nil];
+   
+   
     
-    self.companyList = [[NSMutableArray alloc]initWithObjects:companyOne,companyTwo,companyThree,companyFour, nil];
-    
-    
+  self.companyList = [[DataAccess sharedData] getCompanies];
     
     self.title = @"Mobile device makers";
     
@@ -109,16 +60,17 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+//#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
+//#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return [self.companyList count];
+  //  return [self.companyList count];
+    return  [[[DataAccess sharedData] getCompanies]count];
 
 }
 
@@ -131,8 +83,9 @@
     }
     
     // Configure the cell...
-    Company *company = [self.companyList  objectAtIndex:[indexPath row]];
-    cell.textLabel.text = company.companyName;
+    Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
+    
+    cell.textLabel.text = [[DataAccess sharedData] getCompanyName:company];
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
     
     return cell;
@@ -153,7 +106,9 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [self.companyList removeObjectAtIndex: indexPath.row];
+        
+        [[DataAccess sharedData] deleteCompany:indexPath.row];
+
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
     }   
@@ -167,10 +122,11 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
+    Company *companyToMove = [[DataAccess sharedData] getCompany:fromIndexPath.row];
     
-    Company *companyToMove = [self.companyList objectAtIndex:fromIndexPath.row];
-    [self.companyList removeObjectAtIndex:fromIndexPath.row];
-    [self.companyList insertObject:companyToMove atIndex:toIndexPath.row];
+    [[DataAccess sharedData] deleteCompany:fromIndexPath.row];
+    
+    [[DataAccess sharedData] insertCompany:toIndexPath.row :companyToMove];
 }
 
 
@@ -190,8 +146,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
-    Company *company = [self.companyList objectAtIndex:[indexPath row]];
-    self.childVC.title = company.companyName;
+    Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
+    self.childVC.title = [[DataAccess sharedData] getCompanyName:company];
     self.childVC.company = company;
     
     [self.navigationController pushViewController:self.childVC animated:YES];
