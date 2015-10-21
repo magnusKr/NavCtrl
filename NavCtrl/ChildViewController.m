@@ -32,7 +32,16 @@
      self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addProduct)];
+    
+    UIBarButtonItem *editButton = self.editButtonItem;
+    
+    NSArray *buttonArray = [NSArray arrayWithObjects:addButton,editButton, nil];
+    
+    self.navigationItem.rightBarButtonItems = buttonArray;
+   
+    
     
 }
 
@@ -79,10 +88,42 @@
                         
     cell.textLabel.text = product.productName;
     cell.imageView.image = [UIImage imageNamed:product.productImage];
+    
+    
+    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(handleLongPress:)];
+    lpgr.minimumPressDuration = 1.0; //seconds
+    lpgr.delegate = self;
+    [self.tableView addGestureRecognizer:lpgr];
+    [lpgr release];
+
+    
+   
 
     
     return cell;
 }
+
+
+- (void)handleLongPress:(UILongPressGestureRecognizer*)gesture{
+    
+    if ( gesture.state == UIGestureRecognizerStateEnded ) {
+        
+        CGPoint p = [gesture locationInView:self.tableView];
+        
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:p];
+        
+        EditProductViewController *editProductVC = [[EditProductViewController alloc] initWithNibName:@"EditProductViewController" bundle:nil];
+        editProductVC.productIndex = indexPath.row;
+        editProductVC.company = self.company;
+        [self.navigationController pushViewController:editProductVC animated:YES];
+        
+        // NSLog(@"%li", (long)indexPath.row);
+    }
+    
+    
+}
+
 
 
 // Override to support conditional editing of the table view.
@@ -145,13 +186,32 @@
     
     Product *product = [[DataAccess sharedData]getCompanyProducts:self.company :indexPath.row];
     
+    
     detailViewController.someUrlToLoad =  product.productUrl;
 
     [self.navigationController pushViewController:detailViewController animated:YES];
     
-    [detailViewController release];
+    [ProductsViewController release];
+//    [product release];
 }
 
+
+-(void) addProduct
+{
+    AddProductViewController *addProductVC = [[AddProductViewController alloc] initWithNibName:@"AddProductViewController" bundle:nil];
+    
+    addProductVC.company = self.company;
+    
+    [self.navigationController pushViewController:addProductVC animated:YES];
+}
+-(void)dealloc
+{
+    [AddProductViewController release];
+    [_company release];
+    
+    [super dealloc];
+    
+}
 
 
 @end

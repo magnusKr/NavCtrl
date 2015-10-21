@@ -24,6 +24,16 @@
 		48A656EB18163F8700746D36 /* ChildViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48A656E918163F8700746D36 /* ChildViewController.m */; };
 		48A656EE1816468000746D36 /* Sunflower.gif in Resources */ = {isa = PBXBuildFile; fileRef = 48A656ED1816468000746D36 /* Sunflower.gif */; };
 		9F0DD30E1BD54B9900CAA368 /* DataAccess.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DD30D1BD54B9900CAA368 /* DataAccess.m */; settings = {ASSET_TAGS = (); }; };
+		9F0DD3121BD6926000CAA368 /* AddCompanyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DD3101BD6926000CAA368 /* AddCompanyViewController.m */; settings = {ASSET_TAGS = (); }; };
+		9F0DD3131BD6926000CAA368 /* AddCompanyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD3111BD6926000CAA368 /* AddCompanyViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		9F0DD3151BD6B28900CAA368 /* company.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD3141BD6B28900CAA368 /* company.png */; settings = {ASSET_TAGS = (); }; };
+		9F0DD3191BD6B89300CAA368 /* AddProductViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DD3171BD6B89300CAA368 /* AddProductViewController.m */; settings = {ASSET_TAGS = (); }; };
+		9F0DD31A1BD6B89300CAA368 /* AddProductViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD3181BD6B89300CAA368 /* AddProductViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		9F0DD31C1BD6C56D00CAA368 /* product.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD31B1BD6C56D00CAA368 /* product.png */; settings = {ASSET_TAGS = (); }; };
+		9F0DD3201BD80AD300CAA368 /* EditCompanyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DD31E1BD80AD300CAA368 /* EditCompanyViewController.m */; settings = {ASSET_TAGS = (); }; };
+		9F0DD3211BD80AD300CAA368 /* EditCompanyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD31F1BD80AD300CAA368 /* EditCompanyViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		9F0DD32B1BD821F000CAA368 /* EditProductViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DD3291BD821F000CAA368 /* EditProductViewController.m */; settings = {ASSET_TAGS = (); }; };
+		9F0DD32C1BD821F000CAA368 /* EditProductViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD32A1BD821F000CAA368 /* EditProductViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		9FF6B3B41BCED9790015F471 /* apple.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF6B3B31BCED9790015F471 /* apple.png */; settings = {ASSET_TAGS = (); }; };
 		9FF6B3B61BCED9890015F471 /* htc.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF6B3B51BCED9890015F471 /* htc.png */; settings = {ASSET_TAGS = (); }; };
 		9FF6B3B81BCED9BC0015F471 /* motorola.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF6B3B71BCED9BC0015F471 /* motorola.png */; settings = {ASSET_TAGS = (); }; };
@@ -82,6 +92,20 @@
 		48A656ED1816468000746D36 /* Sunflower.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Sunflower.gif; sourceTree = "<group>"; };
 		9F0DD30C1BD54B9900CAA368 /* DataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		9F0DD30D1BD54B9900CAA368 /* DataAccess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataAccess.m; sourceTree = "<group>"; };
+		9F0DD30F1BD6926000CAA368 /* AddCompanyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddCompanyViewController.h; sourceTree = "<group>"; };
+		9F0DD3101BD6926000CAA368 /* AddCompanyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddCompanyViewController.m; sourceTree = "<group>"; };
+		9F0DD3111BD6926000CAA368 /* AddCompanyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddCompanyViewController.xib; sourceTree = "<group>"; };
+		9F0DD3141BD6B28900CAA368 /* company.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = company.png; path = "../../../../untitled folder/company.png"; sourceTree = "<group>"; };
+		9F0DD3161BD6B89300CAA368 /* AddProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddProductViewController.h; sourceTree = "<group>"; };
+		9F0DD3171BD6B89300CAA368 /* AddProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddProductViewController.m; sourceTree = "<group>"; };
+		9F0DD3181BD6B89300CAA368 /* AddProductViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddProductViewController.xib; sourceTree = "<group>"; };
+		9F0DD31B1BD6C56D00CAA368 /* product.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = product.png; path = "../../../../untitled folder/product.png"; sourceTree = "<group>"; };
+		9F0DD31D1BD80AD300CAA368 /* EditCompanyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditCompanyViewController.h; sourceTree = "<group>"; };
+		9F0DD31E1BD80AD300CAA368 /* EditCompanyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditCompanyViewController.m; sourceTree = "<group>"; };
+		9F0DD31F1BD80AD300CAA368 /* EditCompanyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditCompanyViewController.xib; sourceTree = "<group>"; };
+		9F0DD3281BD821F000CAA368 /* EditProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProductViewController.h; sourceTree = "<group>"; };
+		9F0DD3291BD821F000CAA368 /* EditProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditProductViewController.m; sourceTree = "<group>"; };
+		9F0DD32A1BD821F000CAA368 /* EditProductViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditProductViewController.xib; sourceTree = "<group>"; };
 		9FF6B3B31BCED9790015F471 /* apple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple.png; path = "../../../../untitled folder/apple.png"; sourceTree = "<group>"; };
 		9FF6B3B51BCED9890015F471 /* htc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = htc.png; path = "../../../../untitled folder/htc.png"; sourceTree = "<group>"; };
 		9FF6B3B71BCED9BC0015F471 /* motorola.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = motorola.png; path = "../../../../untitled folder/motorola.png"; sourceTree = "<group>"; };
@@ -136,14 +160,7 @@
 		48A656A818163BF200746D36 = {
 			isa = PBXGroup;
 			children = (
-				9FF6B3EA1BCF0FE20015F471 /* ProductsViewController.h */,
-				9FF6B3EB1BCF0FE20015F471 /* ProductsViewController.m */,
-				9FF6B3EC1BCF0FE20015F471 /* ProductsViewController.xib */,
-				48A656E318163C1B00746D36 /* qcdDemoViewController.h */,
-				48A656E418163C1B00746D36 /* qcdDemoViewController.m */,
-				48A656E818163F8700746D36 /* ChildViewController.h */,
-				48A656E918163F8700746D36 /* ChildViewController.m */,
-				48A656E518163C1B00746D36 /* qcdDemoViewController.xib */,
+				9F0DD3221BD8207A00CAA368 /* ViewController */,
 				9FF6B3F81BD14EAE0015F471 /* Classes */,
 				48A656BA18163BF200746D36 /* NavCtrl */,
 				48A656D318163BF200746D36 /* NavCtrlTests */,
@@ -187,6 +204,8 @@
 		48A656BB18163BF200746D36 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9F0DD31B1BD6C56D00CAA368 /* product.png */,
+				9F0DD3141BD6B28900CAA368 /* company.png */,
 				9FF6B3BF1BCEEB2F0015F471 /* motorola3.jpeg */,
 				9FF6B3C11BCEEB400015F471 /* motorola2.png */,
 				9FF6B3C21BCEEB400015F471 /* motorola1.png */,
@@ -228,6 +247,33 @@
 				48A656D618163BF200746D36 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9F0DD3221BD8207A00CAA368 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				9F0DD3281BD821F000CAA368 /* EditProductViewController.h */,
+				9F0DD3291BD821F000CAA368 /* EditProductViewController.m */,
+				9F0DD32A1BD821F000CAA368 /* EditProductViewController.xib */,
+				9F0DD31D1BD80AD300CAA368 /* EditCompanyViewController.h */,
+				9F0DD31E1BD80AD300CAA368 /* EditCompanyViewController.m */,
+				9F0DD31F1BD80AD300CAA368 /* EditCompanyViewController.xib */,
+				9F0DD3161BD6B89300CAA368 /* AddProductViewController.h */,
+				9F0DD3171BD6B89300CAA368 /* AddProductViewController.m */,
+				9F0DD3181BD6B89300CAA368 /* AddProductViewController.xib */,
+				9F0DD30F1BD6926000CAA368 /* AddCompanyViewController.h */,
+				9F0DD3101BD6926000CAA368 /* AddCompanyViewController.m */,
+				9F0DD3111BD6926000CAA368 /* AddCompanyViewController.xib */,
+				9FF6B3EA1BCF0FE20015F471 /* ProductsViewController.h */,
+				9FF6B3EB1BCF0FE20015F471 /* ProductsViewController.m */,
+				9FF6B3EC1BCF0FE20015F471 /* ProductsViewController.xib */,
+				48A656E318163C1B00746D36 /* qcdDemoViewController.h */,
+				48A656E418163C1B00746D36 /* qcdDemoViewController.m */,
+				48A656E818163F8700746D36 /* ChildViewController.h */,
+				48A656E918163F8700746D36 /* ChildViewController.m */,
+				48A656E518163C1B00746D36 /* qcdDemoViewController.xib */,
+			);
+			name = ViewController;
 			sourceTree = "<group>";
 		};
 		9FF6B3F81BD14EAE0015F471 /* Classes */ = {
@@ -319,6 +365,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F0DD3151BD6B28900CAA368 /* company.png in Resources */,
 				9FF6B3D31BCEEB400015F471 /* iphone.png in Resources */,
 				9FF6B3D41BCEEB400015F471 /* iPad.png in Resources */,
 				9FF6B3CE1BCEEB400015F471 /* htc2.png in Resources */,
@@ -326,20 +373,25 @@
 				48A656E718163C1B00746D36 /* qcdDemoViewController.xib in Resources */,
 				9FF6B3D11BCEEB400015F471 /* galaxys5.png in Resources */,
 				48A656BF18163BF200746D36 /* InfoPlist.strings in Resources */,
+				9F0DD31C1BD6C56D00CAA368 /* product.png in Resources */,
 				9FF6B3CB1BCEEB400015F471 /* motorola2.png in Resources */,
 				9FF6B3B61BCED9890015F471 /* htc.png in Resources */,
 				9FF6B3CD1BCEEB400015F471 /* htc3.png in Resources */,
+				9F0DD3211BD80AD300CAA368 /* EditCompanyViewController.xib in Resources */,
 				9FF6B3BA1BCED9C50015F471 /* samsung.png in Resources */,
 				9FF6B3CC1BCEEB400015F471 /* motorola1.png in Resources */,
 				48A656C718163BF200746D36 /* Images.xcassets in Resources */,
+				9F0DD31A1BD6B89300CAA368 /* AddProductViewController.xib in Resources */,
 				9FF6B3B41BCED9790015F471 /* apple.png in Resources */,
 				9FF6B3CF1BCEEB400015F471 /* htc1.png in Resources */,
 				9FF6B3BE1BCEE38F0015F471 /* galaxys4.png in Resources */,
 				9FF6B3C01BCEEB2F0015F471 /* motorola3.jpeg in Resources */,
 				9FF6B3EE1BCF0FE20015F471 /* ProductsViewController.xib in Resources */,
+				9F0DD3131BD6926000CAA368 /* AddCompanyViewController.xib in Resources */,
 				9FF6B3D01BCEEB400015F471 /* galaxys6.png in Resources */,
 				9FF6B3B81BCED9BC0015F471 /* motorola.png in Resources */,
 				9FF6B3D21BCEEB400015F471 /* ipodtouch.png in Resources */,
+				9F0DD32C1BD821F000CAA368 /* EditProductViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,14 +410,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F0DD3191BD6B89300CAA368 /* AddProductViewController.m in Sources */,
+				9F0DD3121BD6926000CAA368 /* AddCompanyViewController.m in Sources */,
 				9FF6B3FE1BD14F000015F471 /* Product.m in Sources */,
 				9FF6B3ED1BCF0FE20015F471 /* ProductsViewController.m in Sources */,
 				9FF6B3FB1BD14EEE0015F471 /* Company.m in Sources */,
 				9F0DD30E1BD54B9900CAA368 /* DataAccess.m in Sources */,
 				48A656E618163C1B00746D36 /* qcdDemoViewController.m in Sources */,
 				48A656C518163BF200746D36 /* qcdDemoAppDelegate.m in Sources */,
+				9F0DD32B1BD821F000CAA368 /* EditProductViewController.m in Sources */,
 				48A656C118163BF200746D36 /* main.m in Sources */,
 				48A656EB18163F8700746D36 /* ChildViewController.m in Sources */,
+				9F0DD3201BD80AD300CAA368 /* EditCompanyViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

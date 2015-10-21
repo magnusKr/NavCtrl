@@ -9,12 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "ProductsViewController.h"
 #import "qcdDemoViewController.h"
+#import "AddProductViewController.h"
+#import "EditProductViewController.h"
 
 
 
-@interface ChildViewController : UITableViewController
+@interface ChildViewController : UITableViewController <UIGestureRecognizerDelegate>
 
 @property (nonatomic, retain) Company* company;
+
+-(void)addProduct;
 
 
 

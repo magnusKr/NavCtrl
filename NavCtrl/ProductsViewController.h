@@ -12,7 +12,7 @@
 @interface ProductsViewController : UIViewController <UIWebViewDelegate,WKNavigationDelegate>
 
 
-@property (nonatomic, copy) NSString *someUrlToLoad;
+@property (nonatomic, retain) NSString *someUrlToLoad;
 
 //Property for WKWebView
 @property(retain, nonatomic) WKWebView *webView;

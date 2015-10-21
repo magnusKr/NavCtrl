@@ -7,7 +7,7 @@
 //
 
 #import "qcdDemoViewController.h"
-#import "ChildViewController.h"
+
 
 
 @interface qcdDemoViewController ()
@@ -34,19 +34,27 @@
      self.clearsSelectionOnViewWillAppear = NO;
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addCompany)];
+ 
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-
-   
-   
     
-  self.companyList = [[DataAccess sharedData] getCompanies];
+    self.companyList = [[DataAccess sharedData] getCompanies];
     
     self.title = @"Mobile device makers";
     
     self.tableView.allowsMultipleSelectionDuringEditing = NO;
+   
     
     
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [self.tableView reloadData];
+    
+    [super viewWillAppear:animated];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -85,16 +93,42 @@
     // Configure the cell...
     Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
     
+    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
+                                          initWithTarget:self action:@selector(handleLongPress:)];
+    lpgr.minimumPressDuration = 1.0; //seconds
+    lpgr.delegate = self;
+    [self.tableView addGestureRecognizer:lpgr];
+    [lpgr release];
+    
+    
+    
     cell.textLabel.text = [[DataAccess sharedData] getCompanyName:company];
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
-    
+
     return cell;
 }
 
-
+- (void)handleLongPress:(UILongPressGestureRecognizer*)gesture{
+   
+    if ( gesture.state == UIGestureRecognizerStateEnded ) {
+        
+        CGPoint p = [gesture locationInView:self.tableView];
+        
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:p];
+        
+        EditCompanyViewController *editCompanyVC = [[EditCompanyViewController alloc] initWithNibName:@"EditCompanyViewController" bundle:nil];
+        editCompanyVC.companyIndex = indexPath.row;
+        [self.navigationController pushViewController:editCompanyVC animated:YES];
+        
+       // NSLog(@"%li", (long)indexPath.row);
+    }
+    
+    
+}
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
@@ -104,6 +138,7 @@
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         
@@ -111,8 +146,17 @@
 
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
-    }   
-   // else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        
+        
+        
+    }
+    
+
+   
+    
+    
+   
+     // else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
    // }
 }
@@ -152,7 +196,12 @@
     
     [self.navigationController pushViewController:self.childVC animated:YES];
 }
- 
 
+-(void) addCompany
+{
+    AddCompanyViewController *addCompanyVC = [[AddCompanyViewController alloc] initWithNibName:@"AddCompanyViewController" bundle:nil];
+    [self.navigationController pushViewController:addCompanyVC animated:YES];
+
+}
 
 @end

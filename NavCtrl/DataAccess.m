@@ -65,7 +65,7 @@ static DataAccess *sharedDataAccess = nil;
         Product *product3 = [[Product alloc]initWithProductName:@"iPhone" andproductImage:@"iphone.png" andProductUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
         
         companyOne.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product1,product2,product3, nil];
-        
+                
         Company *companyTwo = [[Company alloc]initWithName:@"Samsung mobile devices" andcompanyLogo: @"samsung.png"];
         
         Product *product4 = [[Product alloc]initWithProductName:@"Galaxy S4" andproductImage:@"galaxys4.png" andProductUrl:@"http://www.samsung.com/global/microsite/galaxys4/"];
@@ -76,7 +76,7 @@ static DataAccess *sharedDataAccess = nil;
         Product *product6 = [[Product alloc]initWithProductName:@"Galaxy Tab" andproductImage:@"galaxys6.png" andProductUrl:@"http://www.samsung.com/us/mobile/cell-phones/SM-G925RZKAUSC"];
         
         companyTwo.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product4,product5,product6, nil];
-        
+      
         
         Company *companyThree = [[Company alloc]initWithName:@"Motorola mobile devices" andcompanyLogo:@"motorola.png"];
         
@@ -105,6 +105,7 @@ static DataAccess *sharedDataAccess = nil;
         
         companyFour.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product10,product11,product12, nil];
         
+        
         self->companyList = [[NSMutableArray alloc]initWithObjects:companyOne,companyTwo,companyThree,companyFour, nil];
     
     
@@ -112,12 +113,7 @@ static DataAccess *sharedDataAccess = nil;
     return self;
 }
 
--(void)dealloc
-{
-    [companyList release];
-    [super dealloc];
 
-}
 
 -(NSMutableArray*)getCompanies
 {
@@ -133,6 +129,7 @@ static DataAccess *sharedDataAccess = nil;
 
 -(Company*)getCompany :(NSUInteger)companyIndex
 {
+    
     return [self->companyList  objectAtIndex:companyIndex];
     
 }
@@ -162,6 +159,60 @@ static DataAccess *sharedDataAccess = nil;
 -(void)insertCompanyProducts : (Company*)company :(Product*)productToInsert : (NSUInteger)index
 {
     [company.listOfCompanyProducts insertObject:productToInsert atIndex:index];
+}
+
+-(void)addCompany : (NSString*)companyName
+{
+    
+    Company *company = [[Company alloc]initWithName:companyName andcompanyLogo:@"company.png"];
+    company.listOfCompanyProducts = [[NSMutableArray alloc]init];
+    
+    [self->companyList addObject:company];
+    [companyName retain];
+
+}
+-(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company
+{
+    
+    Product *product = [[Product alloc]initWithProductName:productName andproductImage:@"product.png" andProductUrl:productUrl];
+    
+    [company.listOfCompanyProducts addObject:product];
+    
+    [productName retain];
+    [productUrl retain];
+
+}
+
+-(BOOL)updateCompanyDetails : (NSString*)companyName : (NSString*)logotUrl : (NSUInteger)index
+{
+    Company *company = [[Company alloc]initWithName:companyName andcompanyLogo:logotUrl];
+    
+    [self->companyList removeObjectAtIndex: index];
+    
+    [self->companyList insertObject:company atIndex:index];
+    
+    [companyName retain];
+    [logotUrl retain];
+    
+    return TRUE;
+
+}
+
+-(BOOL)updateProductDetails : (NSString*)productName : (NSString*)productUrl : (NSString*)productImage :(NSUInteger)productIndex : (Company*)company
+{
+    Company *companyToUpdate = company;
+    
+    [companyToUpdate.listOfCompanyProducts removeObjectAtIndex: productIndex];
+    
+     Product *productToUpdate = [[Product alloc]initWithProductName:productName andproductImage:productImage andProductUrl:productUrl];
+    
+    [company.listOfCompanyProducts insertObject:productToUpdate atIndex:productIndex];
+    
+    [productName retain];
+    [productUrl retain];
+    [productImage retain];
+
+    return TRUE;
 }
 
 @end

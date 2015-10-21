@@ -8,18 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "DataAccess.h"
+#import "ChildViewController.h"
+#import "AddCompanyViewController.h"
+#import "EditCompanyViewController.h"
 
 
 @class ChildViewController;
 
-@interface qcdDemoViewController : UITableViewController
+@interface qcdDemoViewController : UITableViewController <UIGestureRecognizerDelegate>
+
 
 @property (nonatomic, retain) NSMutableArray *companyList;
-//@property (nonatomic, retain) DataAccess* dataAccessObject;
-
-
-
 
 @property (nonatomic, retain) IBOutlet  ChildViewController * childVC;
+
+
+-(void) addCompany;
 
 @end

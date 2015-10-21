@@ -22,11 +22,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    
-    //UIWebview
-    //[self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.someUrlToLoad]]];
-    
-    //WKWebview
     WKWebViewConfiguration *theConfiguration = [[WKWebViewConfiguration alloc] init];
     
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:theConfiguration];
@@ -72,6 +67,7 @@
 
 - (void)dealloc {
     [_webView release];
+    [_someUrlToLoad release];
     [super dealloc];
 }
 @end
