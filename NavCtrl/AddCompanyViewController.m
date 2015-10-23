@@ -10,6 +10,10 @@
 
 @interface AddCompanyViewController ()
 @property (retain, nonatomic) IBOutlet UITextField *companyName;
+
+@property (retain, nonatomic) IBOutlet UITextField *companyCode;
+
+
 - (IBAction)addCompany:(id)sender;
 
 @end
@@ -41,7 +45,8 @@
     
     NSString* companyString = self.companyName.text;
   
-    [[DataAccess sharedData] addCompany:companyString];
+    [[DataAccess sharedData] addCompany:companyString : self.companyCode.text];
+
     [self.navigationController popToRootViewControllerAnimated:YES];
 
 }
@@ -49,6 +54,7 @@
 - (void)dealloc {
 
     [_companyName release];
+    [_companyCode release];
     [super dealloc];
 }
 

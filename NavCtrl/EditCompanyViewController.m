@@ -22,22 +22,33 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    Company *company;
-    company = [[DataAccess sharedData] getCompany:self.companyIndex];
+   // Company *company;
+    self.company = [[DataAccess sharedData] getCompany:self.companyIndex];
     
-    self.companyName.text = company.companyName;
-    [self.companyLogo setImage:[UIImage imageNamed:company.companyLogo]];
+    self.companyName.text = self.company.companyName;
+    [self.companyLogo setImage:[UIImage imageNamed:self.company.companyLogo]];
 
     
-    self.companyLogoUrl.text = company.companyLogo;
+    self.companyLogoUrl.text = self.company.companyLogo;
+    self.companyCode.text = self.company.compnayCode;
+    self.stockPrice.text = self.company.compnayStockPrice;
 }
 
 - (IBAction)updateCompanyButton:(id)sender {
+ 
+    self.company.companyName = self.companyName.text;
+    self.company.companyLogo = self.companyLogoUrl.text;
+    self.company.compnayCode = self.companyCode.text;
+    self.company.compnayStockPrice = self.stockPrice.text;
     
-   
-   if([[DataAccess sharedData] updateCompanyDetails: self.companyName.text :self.companyLogoUrl.text :self.companyIndex])
-    [self.navigationController popViewControllerAnimated:YES];
+    if([[DataAccess sharedData] updateCompanyDetails:self.company andIndex:self.companyIndex])
+        {
+          [self.navigationController popViewControllerAnimated:YES];
+            
+        }
+
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -58,6 +69,8 @@
     [_companyName release];
     [_companyLogo release];
     [_companyLogoUrl release];
+    [_companyCode release];
+    [_stockPrice release];
     [super dealloc];
 }
 

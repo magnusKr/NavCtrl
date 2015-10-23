@@ -40,6 +40,8 @@
     NSArray *buttonArray = [NSArray arrayWithObjects:addButton,editButton, nil];
     
     self.navigationItem.rightBarButtonItems = buttonArray;
+    
+
    
     
     
@@ -118,7 +120,7 @@
         editProductVC.company = self.company;
         [self.navigationController pushViewController:editProductVC animated:YES];
         
-        // NSLog(@"%li", (long)indexPath.row);
+
     }
     
     

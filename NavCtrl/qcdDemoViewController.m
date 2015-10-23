@@ -38,8 +38,18 @@
  
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
+   //[[DataAccess sharedData] getCompanyQuote];
+    
+
+
     
     self.companyList = [[DataAccess sharedData] getCompanies];
+    
+    [[DataAccess sharedData] getCompanyQuoteWithDelegate:self];
+    
+
+
+    
     
     self.title = @"Mobile device makers";
     
@@ -47,6 +57,11 @@
    
     
     
+}
+-(void)reload{
+
+    [self.tableView reloadData];
+
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -87,7 +102,7 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
     // Configure the cell...
@@ -104,7 +119,8 @@
     
     cell.textLabel.text = [[DataAccess sharedData] getCompanyName:company];
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
-
+    cell.detailTextLabel.text = [[DataAccess sharedData] getQuoteForCompany:company];
+    
     return cell;
 }
 
@@ -120,7 +136,7 @@
         editCompanyVC.companyIndex = indexPath.row;
         [self.navigationController pushViewController:editCompanyVC animated:YES];
         
-       // NSLog(@"%li", (long)indexPath.row);
+
     }
     
     

@@ -13,9 +13,13 @@
 
 @property (nonatomic, retain) Product* companyProducts;
 @property (nonatomic, retain) NSMutableArray* listOfCompanyProducts;
-@property (nonatomic, retain,readonly) NSString* companyName;
-@property (nonatomic, retain,readonly) NSString* companyLogo;
+@property (nonatomic, retain) NSString* companyName;
+@property (nonatomic, retain) NSString* companyLogo;
+@property (nonatomic, retain) NSString* compnayStockPrice;
+@property (nonatomic, retain) NSString* compnayCode;
 
--(instancetype)initWithName:(NSString*) name andcompanyLogo :(NSString*) logo;
+-(instancetype)initWithName:(NSString*) name andcompanyLogo :(NSString*) logo andcompanycode :(NSString*) companyCode;
+-(instancetype)initWithName:(NSString*) name andcompanyLogo :(NSString*) logo
+;
 
 @end

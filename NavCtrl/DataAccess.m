@@ -51,12 +51,65 @@ static DataAccess *sharedDataAccess = nil;
 }
 
 
+
+-(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate
+{
+
+    
+    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
+        
+    self.quoteUrl = [self.quoteUrl stringByAppendingString:@"&f=a"];
+    
+    NSURL * url = [NSURL URLWithString:self.quoteUrl];
+    
+   
+
+    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithURL:url
+                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                            
+    if(error == nil)
+    {
+        NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+        self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
+                                                                
+        int i = 0;
+        int j = 0;
+                                                              
+        while (j < [companyList count]){
+            Company* company = [companyList objectAtIndex:j];
+                                                                    
+            if(company.compnayCode != nil)
+            {
+                company.compnayStockPrice = [self.companyQuoteArray objectAtIndex:i];
+                i++;
+            }
+            j++;
+        }
+                                                                
+        [delegate reload];
+                                                                
+    }
+                                                            
+    }];
+    [dataTask resume];
+
+}
+-(NSString*)getQuoteForCompany : (Company*)company
+{
+    
+    return company.compnayStockPrice;
+}
+
 -(id) init
 {
 
     if(self = [super init])
     {
-        Company *companyOne = [[Company alloc]initWithName:@"Apple mobile devices" andcompanyLogo:@"apple.png"];
+
+        self.quoteUrl = @"https://finance.yahoo.com/d/quotes.csv?s=";
+        
+        Company *companyOne = [[Company alloc]initWithName:@"Apple mobile devices" andcompanyLogo:@"apple.png" andcompanycode:@"AAPL"];
         Product *product1 = [[Product alloc]initWithProductName:@"iPad" andproductImage:@"iPad.png" andProductUrl:@"https://www.apple.com/shop/buy-ipad/ipad-air-2"];
         
         
@@ -65,8 +118,12 @@ static DataAccess *sharedDataAccess = nil;
         Product *product3 = [[Product alloc]initWithProductName:@"iPhone" andproductImage:@"iphone.png" andProductUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
         
         companyOne.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product1,product2,product3, nil];
+        
+        if(companyOne.compnayCode != nil){
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:companyOne.compnayCode];
+        }
                 
-        Company *companyTwo = [[Company alloc]initWithName:@"Samsung mobile devices" andcompanyLogo: @"samsung.png"];
+        Company *companyTwo = [[Company alloc]initWithName:@"Samsung mobile devices" andcompanyLogo: @"samsung.png" andcompanycode:@"GOOG"];
         
         Product *product4 = [[Product alloc]initWithProductName:@"Galaxy S4" andproductImage:@"galaxys4.png" andProductUrl:@"http://www.samsung.com/global/microsite/galaxys4/"];
         
@@ -76,9 +133,16 @@ static DataAccess *sharedDataAccess = nil;
         Product *product6 = [[Product alloc]initWithProductName:@"Galaxy Tab" andproductImage:@"galaxys6.png" andProductUrl:@"http://www.samsung.com/us/mobile/cell-phones/SM-G925RZKAUSC"];
         
         companyTwo.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product4,product5,product6, nil];
+        
+        
+        
+        if(companyTwo.compnayCode != nil){
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:@"+"];
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:companyTwo.compnayCode];
+        }
       
         
-        Company *companyThree = [[Company alloc]initWithName:@"Motorola mobile devices" andcompanyLogo:@"motorola.png"];
+        Company *companyThree = [[Company alloc]initWithName:@"Motorola mobile devices" andcompanyLogo:@"motorola.png" andcompanycode:@"MSFT"];
         
         
         
@@ -92,7 +156,10 @@ static DataAccess *sharedDataAccess = nil;
         
         companyThree.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product7,product8,product9, nil];
         
-        
+        if(companyThree.compnayCode != nil){
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:@"+"];
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:companyThree.compnayCode];
+        }
         
         Company *companyFour = [[Company alloc]initWithName:@"HTC mobile devices" andcompanyLogo:@"htc.png"];
         
@@ -105,10 +172,15 @@ static DataAccess *sharedDataAccess = nil;
         
         companyFour.listOfCompanyProducts = [[NSMutableArray alloc]initWithObjects:product10,product11,product12, nil];
         
+        if(companyFour.compnayCode != nil){
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:@"+"];
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:companyFour.compnayCode];
+        }
+        
         
         self->companyList = [[NSMutableArray alloc]initWithObjects:companyOne,companyTwo,companyThree,companyFour, nil];
     
-    
+   
     }
     return self;
 }
@@ -123,19 +195,19 @@ static DataAccess *sharedDataAccess = nil;
 
 -(void)deleteCompany :(NSUInteger)companyToDelete
 {
-    [self->companyList removeObjectAtIndex: companyToDelete];
+    [companyList removeObjectAtIndex: companyToDelete];
 
 }
 
 -(Company*)getCompany :(NSUInteger)companyIndex
 {
     
-    return [self->companyList  objectAtIndex:companyIndex];
+    return [companyList  objectAtIndex:companyIndex];
     
 }
 -(void)insertCompany :(NSUInteger)insertAtIndex :(Company*)companyToInsert
 {
-     [self->companyList insertObject:companyToInsert atIndex:insertAtIndex];
+     [companyList insertObject:companyToInsert atIndex:insertAtIndex];
 
 }
 
@@ -161,13 +233,19 @@ static DataAccess *sharedDataAccess = nil;
     [company.listOfCompanyProducts insertObject:productToInsert atIndex:index];
 }
 
--(void)addCompany : (NSString*)companyName
+-(void)addCompany : (NSString*)companyName :(NSString*)companyCode
 {
     
-    Company *company = [[Company alloc]initWithName:companyName andcompanyLogo:@"company.png"];
+    Company *company = [[Company alloc]initWithName:companyName andcompanyLogo:@"company.png" andcompanycode:companyCode];
     company.listOfCompanyProducts = [[NSMutableArray alloc]init];
     
-    [self->companyList addObject:company];
+    [companyList addObject:company];
+    
+    if(company.compnayCode != nil || ![company.compnayCode  isEqual: @""]){
+        self.quoteUrl = [self.quoteUrl stringByAppendingString:@"+"];
+        self.quoteUrl = [self.quoteUrl stringByAppendingString:company.compnayCode];
+    }
+  
     [companyName retain];
 
 }
@@ -183,17 +261,19 @@ static DataAccess *sharedDataAccess = nil;
 
 }
 
--(BOOL)updateCompanyDetails : (NSString*)companyName : (NSString*)logotUrl : (NSUInteger)index
+
+-(BOOL)updateCompanyDetails:(Company*)company andIndex:(NSUInteger)index
 {
-    Company *company = [[Company alloc]initWithName:companyName andcompanyLogo:logotUrl];
+    Company *updateCompany = company;
     
-    [self->companyList removeObjectAtIndex: index];
+   // company.compnayStockPrice = companyStockPrice;
     
-    [self->companyList insertObject:company atIndex:index];
+    [companyList removeObjectAtIndex: index];
     
-    [companyName retain];
-    [logotUrl retain];
-    
+    [companyList insertObject:updateCompany atIndex:index];
+
+    [updateCompany retain];
+
     return TRUE;
 
 }
