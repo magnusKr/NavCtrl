@@ -23,6 +23,8 @@
 }
 @property (nonatomic,retain) NSArray* companyQuoteArray;
 @property (nonatomic,retain) NSString* quoteUrl;
+@property (nonatomic,retain) NSURLSessionConfiguration* defaultConfigObject;
+@property (nonatomic,retain) NSURLSession *defaultSession;
 
 -(NSMutableArray*)getCompanies;
 -(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate;
@@ -33,11 +35,10 @@
 -(Product*)getCompanyProducts : (Company*)company : (NSUInteger)index;
 -(void)deleteCompanyProducts :(NSUInteger)productToDelete : (Company*)company;
 -(void)insertCompanyProducts : (Company*)company :(Product*)productToInsert : (NSUInteger)index;
--(void)addCompany : (NSString*)companyName :(NSString*)companyCode ;
+-(void)addCompany : (NSString*)companyName :(NSString*)companyCode :(id<DataAccessDelegate>)delegate;
+
 -(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company;
 -(BOOL)updateCompanyDetails:(Company*)company andIndex:(NSUInteger)index;
-
-
 
 -(BOOL)updateProductDetails : (NSString*)productName : (NSString*)productUrl : (NSString*)productImage :(NSUInteger)productIndex : (Company*)company;
 -(NSString*)getQuoteForCompany : (Company*)company;

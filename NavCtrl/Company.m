@@ -19,8 +19,6 @@
             _companyLogo = logo;
             _compnayStockPrice = nil;
             _compnayCode = companyCode;
-            
-      
         }
         return self;
 
@@ -35,8 +33,6 @@
         _companyLogo = logo;
         _compnayStockPrice = nil;
         _compnayCode = nil;
-        
-        
     }
     return self;
     

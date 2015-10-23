@@ -18,9 +18,6 @@
 
 @implementation AddProductViewController
 
-//@synthesize productName = _productName;
-//@synthesize productUrl = _productUrl;
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -62,7 +59,6 @@
 - (void)dealloc {
     [_productName release];
     [_productUrl release];
-    //[_company release];
-    [super dealloc];
+       [super dealloc];
 }
 @end

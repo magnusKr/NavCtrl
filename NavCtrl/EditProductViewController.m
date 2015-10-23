@@ -24,8 +24,6 @@
     product = [[DataAccess sharedData] getCompanyProducts:self.company :self.productIndex];
       
     self.productName.text = product.productName;
-//   [self.productImage setImage:[UIImage imageNamed:product.productImage]];
-
    
     self.productUrl.text = product.productUrl;
     self.productImageUrl.text = product.productImage;
@@ -42,7 +40,7 @@
     
     
     if([[DataAccess sharedData] updateProductDetails: self.productName.text :self.productUrl.text :  self.productImageUrl.text :self.productIndex : self.company])
-     //[self.navigationController popToRootViewControllerAnimated:YES];
+
         [self.navigationController popViewControllerAnimated:YES];
 }
 

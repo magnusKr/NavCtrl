@@ -42,13 +42,10 @@
 
 - (IBAction)addCompany:(id)sender
 {
-    
     NSString* companyString = self.companyName.text;
-  
-    [[DataAccess sharedData] addCompany:companyString : self.companyCode.text];
-
+    [[DataAccess sharedData] addCompany:companyString :self.companyCode.text : self.delegate];
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
-
 }
 
 - (void)dealloc {

@@ -38,24 +38,15 @@
  
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-   //[[DataAccess sharedData] getCompanyQuote];
-    
-
-
     
     self.companyList = [[DataAccess sharedData] getCompanies];
     
     [[DataAccess sharedData] getCompanyQuoteWithDelegate:self];
     
-
-
-    
     
     self.title = @"Mobile device makers";
     
     self.tableView.allowsMultipleSelectionDuringEditing = NO;
-   
-    
     
 }
 -(void)reload{
@@ -91,8 +82,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 //#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-  //  return [self.companyList count];
+
     return  [[[DataAccess sharedData] getCompanies]count];
 
 }
@@ -136,10 +126,7 @@
         editCompanyVC.companyIndex = indexPath.row;
         [self.navigationController pushViewController:editCompanyVC animated:YES];
         
-
     }
-    
-    
 }
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -162,16 +149,7 @@
 
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
-        
-        
-        
     }
-    
-
-   
-    
-    
-   
      // else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
    // }
@@ -216,6 +194,8 @@
 -(void) addCompany
 {
     AddCompanyViewController *addCompanyVC = [[AddCompanyViewController alloc] initWithNibName:@"AddCompanyViewController" bundle:nil];
+    
+    addCompanyVC.delegate = self;
     [self.navigationController pushViewController:addCompanyVC animated:YES];
 
 }

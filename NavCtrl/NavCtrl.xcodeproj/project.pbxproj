@@ -269,9 +269,9 @@
 				9FF6B3EC1BCF0FE20015F471 /* ProductsViewController.xib */,
 				48A656E318163C1B00746D36 /* qcdDemoViewController.h */,
 				48A656E418163C1B00746D36 /* qcdDemoViewController.m */,
+				48A656E518163C1B00746D36 /* qcdDemoViewController.xib */,
 				48A656E818163F8700746D36 /* ChildViewController.h */,
 				48A656E918163F8700746D36 /* ChildViewController.m */,
-				48A656E518163C1B00746D36 /* qcdDemoViewController.xib */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";

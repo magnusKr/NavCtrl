@@ -22,7 +22,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-   // Company *company;
+    
     self.company = [[DataAccess sharedData] getCompany:self.companyIndex];
     
     self.companyName.text = self.company.companyName;

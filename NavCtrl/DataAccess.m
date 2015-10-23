@@ -55,17 +55,11 @@ static DataAccess *sharedDataAccess = nil;
 -(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate
 {
 
-    
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
-        
     self.quoteUrl = [self.quoteUrl stringByAppendingString:@"&f=a"];
     
     NSURL * url = [NSURL URLWithString:self.quoteUrl];
     
-   
-
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithURL:url
+    NSURLSessionDataTask * dataTask = [self.defaultSession dataTaskWithURL:url
                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                             
     if(error == nil)
@@ -97,7 +91,6 @@ static DataAccess *sharedDataAccess = nil;
 }
 -(NSString*)getQuoteForCompany : (Company*)company
 {
-    
     return company.compnayStockPrice;
 }
 
@@ -179,6 +172,9 @@ static DataAccess *sharedDataAccess = nil;
         
         
         self->companyList = [[NSMutableArray alloc]initWithObjects:companyOne,companyTwo,companyThree,companyFour, nil];
+        
+        self.defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+        self.defaultSession = [NSURLSession sessionWithConfiguration: self.defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
     
    
     }
@@ -190,7 +186,7 @@ static DataAccess *sharedDataAccess = nil;
 -(NSMutableArray*)getCompanies
 {
     
-    return self->companyList;
+    return companyList;
 }
 
 -(void)deleteCompany :(NSUInteger)companyToDelete
@@ -233,18 +229,40 @@ static DataAccess *sharedDataAccess = nil;
     [company.listOfCompanyProducts insertObject:productToInsert atIndex:index];
 }
 
--(void)addCompany : (NSString*)companyName :(NSString*)companyCode
+-(void)addCompany : (NSString*)companyName :(NSString*)companyCode :(id<DataAccessDelegate>)delegate
 {
     
     Company *company = [[Company alloc]initWithName:companyName andcompanyLogo:@"company.png" andcompanycode:companyCode];
     company.listOfCompanyProducts = [[NSMutableArray alloc]init];
     
-    [companyList addObject:company];
-    
+   
     if(company.compnayCode != nil || ![company.compnayCode  isEqual: @""]){
-        self.quoteUrl = [self.quoteUrl stringByAppendingString:@"+"];
-        self.quoteUrl = [self.quoteUrl stringByAppendingString:company.compnayCode];
+        
+        NSString *urlString =  @"https://finance.yahoo.com/d/quotes.csv?s=";
+        urlString = [urlString stringByAppendingString:company.compnayCode];
+        urlString = [urlString stringByAppendingString:@"&f=a"];
+    
+    
+    
+    NSURL * url = [NSURL URLWithString:urlString];
+    
+    NSURLSessionDataTask * dataTask = [self.defaultSession dataTaskWithURL:url
+                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                             
+                                                             if(error == nil)
+                                                             {
+                                                                 NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+                                                                 company.compnayStockPrice = text;
+                                                                 [delegate reload];
+                                                                 
+                                                             }
+                                                             
+                                                         }];
+    [dataTask resume];
+    
     }
+    
+    [companyList addObject:company];
   
     [companyName retain];
 
@@ -265,8 +283,6 @@ static DataAccess *sharedDataAccess = nil;
 -(BOOL)updateCompanyDetails:(Company*)company andIndex:(NSUInteger)index
 {
     Company *updateCompany = company;
-    
-   // company.compnayStockPrice = companyStockPrice;
     
     [companyList removeObjectAtIndex: index];
     
