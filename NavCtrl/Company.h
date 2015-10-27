@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Product.h"
 
-@interface Company : NSObject
+@interface Company : NSObject 
 
 @property (nonatomic, retain) Product* companyProducts;
 @property (nonatomic, retain) NSMutableArray* listOfCompanyProducts;

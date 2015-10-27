@@ -23,4 +23,28 @@
     return self;
     
 }
+
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    [coder encodeObject:self.productName forKey:@"product_name"];
+    [coder encodeObject:self.productImage forKey:@"product_logo"];
+    [coder encodeObject:self.productUrl forKey:@"product_url"];
+
+    
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    
+    self = [super init];
+    if (self) {
+        self.productName = [coder decodeObjectForKey:@"product_name"];
+        self.productImage = [coder decodeObjectForKey:@"product_logo"];
+        self.productUrl = [coder decodeObjectForKey:@"product_url"];
+
+        
+    }
+    return self;
+}
+
+
 @end

@@ -43,7 +43,8 @@
     
     if([[DataAccess sharedData] updateCompanyDetails:self.company andIndex:self.companyIndex])
         {
-          [self.navigationController popViewControllerAnimated:YES];
+            [[DataAccess sharedData]saveDataToCompanyList];
+            [self.navigationController popViewControllerAnimated:YES];
             
         }
 

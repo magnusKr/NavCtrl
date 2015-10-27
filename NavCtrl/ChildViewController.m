@@ -138,6 +138,7 @@
         // Delete the row from the data source
         
         [[DataAccess sharedData]deleteCompanyProducts:[indexPath row] :self.company];
+         [[DataAccess sharedData]saveDataToCompanyList];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
    // else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -155,6 +156,8 @@
     [[DataAccess sharedData]deleteCompanyProducts:fromIndexPath.row :self.company];
     
     [[DataAccess sharedData]insertCompanyProducts:self.company :productToMove :toIndexPath.row];
+    
+     [[DataAccess sharedData]saveDataToCompanyList];
     
    }
 

@@ -45,6 +45,8 @@
     NSString* companyString = self.companyName.text;
     [[DataAccess sharedData] addCompany:companyString :self.companyCode.text : self.delegate];
     
+     [[DataAccess sharedData]saveDataToCompanyList];
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 

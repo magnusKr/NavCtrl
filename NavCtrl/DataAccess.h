@@ -12,11 +12,13 @@
 
 @protocol DataAccessDelegate <NSObject>
 
+
 -(void)reload;
 
 @end
 
 @interface DataAccess : NSObject <NSURLSessionDelegate>
+
 {
     NSMutableArray* companyList;
 
@@ -26,6 +28,8 @@
 @property (nonatomic,retain) NSURLSessionConfiguration* defaultConfigObject;
 @property (nonatomic,retain) NSURLSession *defaultSession;
 
+
++ (id)sharedData;
 -(NSMutableArray*)getCompanies;
 -(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate;
 -(void)deleteCompany :(NSUInteger)companyToDelete;
@@ -36,14 +40,11 @@
 -(void)deleteCompanyProducts :(NSUInteger)productToDelete : (Company*)company;
 -(void)insertCompanyProducts : (Company*)company :(Product*)productToInsert : (NSUInteger)index;
 -(void)addCompany : (NSString*)companyName :(NSString*)companyCode :(id<DataAccessDelegate>)delegate;
-
 -(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company;
 -(BOOL)updateCompanyDetails:(Company*)company andIndex:(NSUInteger)index;
-
 -(BOOL)updateProductDetails : (NSString*)productName : (NSString*)productUrl : (NSString*)productImage :(NSUInteger)productIndex : (Company*)company;
 -(NSString*)getQuoteForCompany : (Company*)company;
-
-+ (id)sharedData;
+-(void)saveDataToCompanyList;
 
 
 @end

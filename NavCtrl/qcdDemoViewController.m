@@ -146,6 +146,8 @@
         // Delete the row from the data source
         
         [[DataAccess sharedData] deleteCompany:indexPath.row];
+        
+         [[DataAccess sharedData]saveDataToCompanyList];
 
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
@@ -165,6 +167,9 @@
     [[DataAccess sharedData] deleteCompany:fromIndexPath.row];
     
     [[DataAccess sharedData] insertCompany:toIndexPath.row :companyToMove];
+    
+    [[DataAccess sharedData]saveDataToCompanyList];
+    
 }
 
 

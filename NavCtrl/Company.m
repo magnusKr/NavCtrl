@@ -38,4 +38,28 @@
     
 }
 
+-(void)encodeWithCoder:(NSCoder*)coder
+{
+    [coder encodeObject:self.companyName forKey:@"company_name"];
+    [coder encodeObject:self.companyLogo forKey:@"company_logo"];
+    [coder encodeObject:self.compnayStockPrice forKey:@"company_stockprice"];
+    [coder encodeObject:self.compnayCode forKey:@"company_code"];
+    [coder encodeObject:self.listOfCompanyProducts forKey:@"company_products"];
+    
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+
+    self = [super init];
+    if (self) {
+        self.companyName = [coder decodeObjectForKey:@"company_name"];
+        self.companyLogo = [coder decodeObjectForKey:@"company_logo"];
+        self.compnayStockPrice = [coder decodeObjectForKey:@"company_stockprice"];
+        self.compnayCode = [coder decodeObjectForKey:@"company_code"];
+        self.listOfCompanyProducts = [coder decodeObjectForKey:@"company_products"];
+    
+    }
+    return self;
+}
+
 @end

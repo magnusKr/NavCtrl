@@ -40,7 +40,7 @@
     
     
     if([[DataAccess sharedData] updateProductDetails: self.productName.text :self.productUrl.text :  self.productImageUrl.text :self.productIndex : self.company])
-
+        [[DataAccess sharedData]saveDataToCompanyList];
         [self.navigationController popViewControllerAnimated:YES];
 }
 

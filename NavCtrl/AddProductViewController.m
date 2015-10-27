@@ -51,6 +51,8 @@
         Company* company = self.company;
         
         [[DataAccess sharedData] addProductToCompany:pName :pUrl :company];
+        
+        [[DataAccess sharedData]saveDataToCompanyList];
         [self.navigationController popViewControllerAnimated:YES];
         
     }
