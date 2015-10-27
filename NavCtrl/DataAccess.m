@@ -250,11 +250,17 @@ static DataAccess *sharedDataAccess = nil;
 
 -(void)saveDataToCompanyList
 {
-    NSData* encodedObject = [NSKeyedArchiver archivedDataWithRootObject:companyList];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:encodedObject forKey:@"companyList"];
-    [defaults synchronize];
+//    NSData* encodedObject = [NSKeyedArchiver archivedDataWithRootObject:companyList];
+//    
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    [defaults setObject:encodedObject forKey:@"companyList"];
+//    [defaults synchronize];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent: @"myFile.plist"];
+
+   [NSKeyedArchiver archiveRootObject:companyList toFile:filePath];
+
 }
 
 
@@ -264,15 +270,33 @@ static DataAccess *sharedDataAccess = nil;
     if(self = [super init])
     {
         
-        NSUserDefaults *defaults= [NSUserDefaults standardUserDefaults];
+       // NSUserDefaults *defaults= [NSUserDefaults standardUserDefaults];
         
-        if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"companyList"])
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *filePath = [documentsDirectory stringByAppendingPathComponent: @"myFile.plist"];
+        NSLog(@"Path = %@",filePath);
+        
+//        if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"companyList"])
+//        {
+//            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//            NSData *encodedObject = [defaults objectForKey:@"companyList"];
+//            self->companyList = [[NSMutableArray alloc]init];
+//            companyList = [NSKeyedUnarchiver unarchiveObjectWithData:encodedObject];
+//        }
+        
+
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath])
         {
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            NSData *encodedObject = [defaults objectForKey:@"companyList"];
             self->companyList = [[NSMutableArray alloc]init];
-            companyList = [NSKeyedUnarchiver unarchiveObjectWithData:encodedObject];
+            companyList = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+        
+        
         }
+        
+       
         
         else{
             Company *companyOne = [[Company alloc]initWithName:@"Apple Mobile" andcompanyLogo:@"apple.png" andcompanycode:@"AAPL"];
@@ -326,11 +350,28 @@ static DataAccess *sharedDataAccess = nil;
             self->companyList = [[NSMutableArray alloc]initWithObjects:companyOne,companyTwo,companyThree,companyFour, nil];
             
             
-            NSData* encodedObject = [NSKeyedArchiver archivedDataWithRootObject:companyList];
+
             
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:encodedObject forKey:@"companyList"];
-            [defaults synchronize];
+            
+    
+            
+//            //archive the data
+//            NSData* encodedObject = [NSKeyedArchiver archivedDataWithRootObject:companyList];
+//            
+//            
+//            //Put in nsuser deafults
+//            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//            [defaults setObject:encodedObject forKey:@"companyList"];
+//            [defaults synchronize];
+            
+            
+            //archive data to file
+            [NSKeyedArchiver archiveRootObject:companyList toFile:filePath];
+      
+         
+            
+            
+
             
         }
         
