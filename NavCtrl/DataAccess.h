@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "Product.h"
 #import "Company.h"
+#import "sqlite3.h"
+
 
 @protocol DataAccessDelegate <NSObject>
 
@@ -18,9 +20,10 @@
 
 @interface DataAccess : NSObject <NSURLSessionDelegate>
 {
-    NSMutableArray* companyList;
-
+    
+    sqlite3 *database;
 }
+@property (nonatomic,retain) NSMutableArray* companyList;
 @property (nonatomic,retain) NSArray* companyQuoteArray;
 @property (nonatomic,retain) NSString* quoteUrl;
 @property (nonatomic,retain) NSURLSessionConfiguration* defaultConfigObject;
@@ -28,19 +31,20 @@
 
 -(NSMutableArray*)getCompanies;
 -(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate;
--(void)deleteCompany :(NSUInteger)companyToDelete;
+-(void)deleteCompany :(NSUInteger)companyToDelete :(BOOL)deleteCompanyinDB;
 -(void)insertCompany :(NSUInteger)insertAtIndex :(Company*)companyToInsert;
 -(Company*)getCompany :(NSUInteger)companyIndex;
 -(NSString*)getCompanyName : (Company*)company;
 -(Product*)getCompanyProducts : (Company*)company : (NSUInteger)index;
--(void)deleteCompanyProducts :(NSUInteger)productToDelete : (Company*)company;
+-(void)deleteCompanyProducts :(NSUInteger)IndexToDelete : (Company*)company :(BOOL)deleteProductFromDb;
 -(void)insertCompanyProducts : (Company*)company :(Product*)productToInsert : (NSUInteger)index;
+- (void)createEditableCopyOfDatabaseIfNeeded;
 -(void)addCompany : (NSString*)companyName :(NSString*)companyCode :(id<DataAccessDelegate>)delegate;
-
+-(void)updateDbRowIndex;
+-(void)updateDbRowIndexProduct :(Company*)company;
 -(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company;
 -(BOOL)updateCompanyDetails:(Company*)company andIndex:(NSUInteger)index;
-
--(BOOL)updateProductDetails : (NSString*)productName : (NSString*)productUrl : (NSString*)productImage :(NSUInteger)productIndex : (Company*)company;
+-(BOOL)updateProductDetails : (Product*)productToUpdate : (Company*)company;
 -(NSString*)getQuoteForCompany : (Company*)company;
 
 + (id)sharedData;

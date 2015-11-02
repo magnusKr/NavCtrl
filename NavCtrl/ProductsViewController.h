@@ -15,6 +15,6 @@
 @property (nonatomic, retain) NSString *someUrlToLoad;
 
 //Property for WKWebView
-@property(retain, nonatomic) WKWebView *webView;
+//@property(retain, nonatomic) WKWebView *webView;
 
 @end

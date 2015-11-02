@@ -30,19 +30,15 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
      self.clearsSelectionOnViewWillAppear = NO;
  
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addCompany)];
  
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    
     self.companyList = [[DataAccess sharedData] getCompanies];
     
     [[DataAccess sharedData] getCompanyQuoteWithDelegate:self];
-    
     
     self.title = @"Mobile device makers";
     
@@ -52,13 +48,11 @@
 -(void)reload{
 
     [self.tableView reloadData];
-
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [self.tableView reloadData];
-    
     [super viewWillAppear:animated];
 
 }
@@ -66,7 +60,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 
@@ -104,9 +97,7 @@
     lpgr.delegate = self;
     [self.tableView addGestureRecognizer:lpgr];
     [lpgr release];
-    
-    
-    
+        
     cell.textLabel.text = [[DataAccess sharedData] getCompanyName:company];
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
     cell.detailTextLabel.text = [[DataAccess sharedData] getQuoteForCompany:company];
@@ -119,20 +110,18 @@
     if ( gesture.state == UIGestureRecognizerStateEnded ) {
         
         CGPoint p = [gesture locationInView:self.tableView];
-        
         NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:p];
         
         EditCompanyViewController *editCompanyVC = [[EditCompanyViewController alloc] initWithNibName:@"EditCompanyViewController" bundle:nil];
         editCompanyVC.companyIndex = indexPath.row;
-        [self.navigationController pushViewController:editCompanyVC animated:YES];
         
+        [self.navigationController pushViewController:editCompanyVC animated:YES];
+        [editCompanyVC release];
     }
 }
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    // Return NO if you do not want the specified item to be editable.
     return YES;
 }
 
@@ -145,26 +134,20 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         
-        [[DataAccess sharedData] deleteCompany:indexPath.row];
-
+        [[DataAccess sharedData] deleteCompany:indexPath.row : TRUE];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
     }
-     // else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-   // }
 }
-
-
 
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
     Company *companyToMove = [[DataAccess sharedData] getCompany:fromIndexPath.row];
     
-    [[DataAccess sharedData] deleteCompany:fromIndexPath.row];
-    
+    [[DataAccess sharedData] deleteCompany:fromIndexPath.row : FALSE];
     [[DataAccess sharedData] insertCompany:toIndexPath.row :companyToMove];
+    [[DataAccess sharedData] updateDbRowIndex];
 }
 
 
@@ -183,7 +166,6 @@
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
     Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
     self.childVC.title = [[DataAccess sharedData] getCompanyName:company];
     self.childVC.company = company;
@@ -194,10 +176,12 @@
 -(void) addCompany
 {
     AddCompanyViewController *addCompanyVC = [[AddCompanyViewController alloc] initWithNibName:@"AddCompanyViewController" bundle:nil];
-    
     addCompanyVC.delegate = self;
+    
     [self.navigationController pushViewController:addCompanyVC animated:YES];
-
+    
+    [addCompanyVC release];
 }
+
 
 @end

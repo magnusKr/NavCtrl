@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "qcdDemoViewController.h"
 
+
 @interface EditProductViewController : UIViewController
 @property NSUInteger productIndex;
 @property (retain, nonatomic) Company* company;

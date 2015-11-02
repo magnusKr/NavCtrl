@@ -2,13 +2,12 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8191"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProductsViewController">
             <connections>
-                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
-                <outlet property="webView" destination="Zxz-cD-ynk" id="D5g-dF-0yg"/>
+                <outlet property="view" destination="mKy-ST-pyD" id="8St-xG-qH8"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -16,12 +15,18 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <webView contentMode="scaleToFill" fixedFrame="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zxz-cD-ynk">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mKy-ST-pyD">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </webView>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="mKy-ST-pyD" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="aX2-n5-t33"/>
+                <constraint firstAttribute="bottom" secondItem="mKy-ST-pyD" secondAttribute="bottom" id="ePe-Y3-rp7"/>
+                <constraint firstItem="mKy-ST-pyD" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="ra4-SS-DKC"/>
+                <constraint firstAttribute="trailing" secondItem="mKy-ST-pyD" secondAttribute="trailing" id="s7F-qP-9Ng"/>
+            </constraints>
         </view>
     </objects>
 </document>

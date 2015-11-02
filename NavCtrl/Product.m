@@ -18,6 +18,24 @@
         _productName = productName;
         _productImage = productImage;
         _productUrl = productUrl;
+
+        
+    }
+    return self;
+    
+}
+
+-(instancetype)initWithProductNameandIndex:(NSString*)productName andproductImage:(NSString*)productImage andProductUrl:(NSString*)productURL andproductrowindex:(int)productRowId andproductId :(int)productId
+{
+    
+    self = [super init];
+    if (self) {
+        _productName = productName;
+        _productImage = productImage;
+        _productUrl = productURL;
+        _productRowIndex = productRowId;
+        _productId = productId;
+        
         
     }
     return self;

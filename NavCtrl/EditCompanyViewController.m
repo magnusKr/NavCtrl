@@ -24,11 +24,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     self.company = [[DataAccess sharedData] getCompany:self.companyIndex];
-    
     self.companyName.text = self.company.companyName;
     [self.companyLogo setImage:[UIImage imageNamed:self.company.companyLogo]];
-
-    
     self.companyLogoUrl.text = self.company.companyLogo;
     self.companyCode.text = self.company.compnayCode;
     self.stockPrice.text = self.company.compnayStockPrice;
@@ -42,10 +39,9 @@
     self.company.compnayStockPrice = self.stockPrice.text;
     
     if([[DataAccess sharedData] updateCompanyDetails:self.company andIndex:self.companyIndex])
-        {
-          [self.navigationController popViewControllerAnimated:YES];
-            
-        }
+    {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 
 }
 

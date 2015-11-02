@@ -20,8 +20,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)didReceiveMemoryWarning {
@@ -39,26 +37,18 @@
 }
 */
 
-- (IBAction)addProduct:(id)sender {
-    {
-        
-        
-        NSString *pName = [_productName text ];
-
-        
+- (IBAction)addProduct:(id)sender
+{
+        NSString *pName = [self.productName text ];
         NSString *pUrl = [self.productUrl text];
-        
         Company* company = self.company;
         
         [[DataAccess sharedData] addProductToCompany:pName :pUrl :company];
         [self.navigationController popViewControllerAnimated:YES];
-        
-    }
-    
 }
 - (void)dealloc {
     [_productName release];
     [_productUrl release];
-       [super dealloc];
+    [super dealloc];
 }
 @end

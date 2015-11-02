@@ -137,7 +137,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         
-        [[DataAccess sharedData]deleteCompanyProducts:[indexPath row] :self.company];
+        [[DataAccess sharedData]deleteCompanyProducts:[indexPath row] :self.company:TRUE];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
    // else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -152,9 +152,11 @@
 {
     Product *productToMove = [[DataAccess sharedData]getCompanyProducts:self.company :fromIndexPath.row];
     
-    [[DataAccess sharedData]deleteCompanyProducts:fromIndexPath.row :self.company];
+    [[DataAccess sharedData]deleteCompanyProducts:fromIndexPath.row :self.company :FALSE];
     
     [[DataAccess sharedData]insertCompanyProducts:self.company :productToMove :toIndexPath.row];
+    
+    [[DataAccess sharedData]updateDbRowIndexProduct:self.company];
     
    }
 

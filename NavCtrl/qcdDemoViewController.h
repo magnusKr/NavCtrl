@@ -17,11 +17,8 @@
 
 @interface qcdDemoViewController : UITableViewController <UIGestureRecognizerDelegate,DataAccessDelegate>
 
-
 @property (nonatomic, retain) NSMutableArray *companyList;
-
 @property (nonatomic, retain) IBOutlet  ChildViewController * childVC;
-
 
 -(void) addCompany;
 

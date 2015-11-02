@@ -10,7 +10,7 @@
 
 @implementation Company
 
--(instancetype)initWithName:(NSString*) name andcompanyLogo :(NSString*) logo andcompanycode :(NSString*) companyCode
+-(instancetype)initWithUniqueId:(int)companyId andcompanyname:(NSString*) name andcompanyLogo :(NSString*) logo andcompanycode :(NSString*) companyCode andcompanyrowindex :(int)companyRowIndex
 {
 
         self = [super init];
@@ -19,12 +19,14 @@
             _companyLogo = logo;
             _compnayStockPrice = nil;
             _compnayCode = companyCode;
+            _companyId = companyId;
+            _companyRowIndex = companyRowIndex;
         }
         return self;
 
 }
 
--(instancetype)initWithName:(NSString*) name andcompanyLogo :(NSString*) logo
+-(instancetype)initWithName:(NSString*) name andcompanyLogo :(NSString*) logo andcompanycode :(NSString*)companyCode andcompanyrowindex:(int)companyRowIndex
 {
     
     self = [super init];
@@ -32,7 +34,8 @@
         _companyName = name;
         _companyLogo = logo;
         _compnayStockPrice = nil;
-        _compnayCode = nil;
+        _compnayCode = companyCode;
+        _companyRowIndex = companyRowIndex;
     }
     return self;
     

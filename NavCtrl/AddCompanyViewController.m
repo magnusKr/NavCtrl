@@ -43,8 +43,12 @@
 - (IBAction)addCompany:(id)sender
 {
     NSString* companyString = self.companyName.text;
-    [[DataAccess sharedData] addCompany:companyString :self.companyCode.text : self.delegate];
+    NSString* companyCodeString = self.companyCode.text;
     
+    if([companyCodeString  isEqual: @""])
+        companyCodeString = @"-";
+    
+    [[DataAccess sharedData] addCompany:companyString :companyCodeString : self.delegate];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
