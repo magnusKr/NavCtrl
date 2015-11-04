@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 
-@interface ProductsViewController : UIViewController <UIWebViewDelegate,WKNavigationDelegate>
+@interface ProductViewController : UIViewController <UIWebViewDelegate,WKNavigationDelegate>
 
 
 @property (nonatomic, retain) NSString *someUrlToLoad;

@@ -20,9 +20,9 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:(BOOL)animated];
     Product *product;
-    product = [[DataAccess sharedData] getCompanyProducts:self.company :self.productIndex];
-      
+    product = [self.company.listOfCompanyProducts objectAtIndex:self.productIndex];
     self.productName.text = product.productName;
     self.productUrl.text = product.productUrl;
     self.productImageUrl.text = product.productImage;
@@ -38,13 +38,13 @@
 - (IBAction)updateProductButton:(id)sender {
     
     Product *product;
-    product = [[DataAccess sharedData] getCompanyProducts:self.company :self.productIndex];
+    product = [self.company.listOfCompanyProducts objectAtIndex:self.productIndex];
     
     product.productName = self.productName.text;
     product.productUrl = self.productUrl.text;
     product.productImage = self.productImageUrl.text;
     
-    if([[DataAccess sharedData] updateProductDetails:product :self.company])
+    if([[DataAccess sharedData] updateProductDetails:product])
 
         [self.navigationController popViewControllerAnimated:YES];
 }

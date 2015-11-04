@@ -23,22 +23,11 @@ static DataAccess *sharedDataAccess = nil;
     return sharedDataAccess;
 }
 
-+(id)allocWithZone:(NSZone *)zone
-{
-    return [[self sharedData] retain];
-}
-
-- (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
 
 - (id)retain {
     return self;
 }
 
-//- (unsigned)retainCount {
-//    return UINT_MAX; //denotes an object that cannot be released
-//}
 
 - (oneway void)release {
     // never release
@@ -74,6 +63,7 @@ static DataAccess *sharedDataAccess = nil;
                 i++;
             }
             j++;
+        
         }
                                                                 
         [delegate reload];
@@ -84,10 +74,7 @@ static DataAccess *sharedDataAccess = nil;
     [dataTask resume];
 
 }
--(NSString*)getQuoteForCompany : (Company*)company
-{
-    return company.compnayStockPrice;
-}
+
 
 -(id) init
 {
@@ -205,13 +192,13 @@ static DataAccess *sharedDataAccess = nil;
     }
 }
 
--(NSMutableArray*)getCompanies
+-(NSUInteger)getNumberOfCompanies
 {
     
-    return self.companyList;
+    return [self.companyList count];
 }
 
--(void)deleteCompany :(NSUInteger)companyToDelete :(BOOL)deleteCompanyinDB
+-(void)deleteCompany :(NSUInteger)companyToDelete
 {
     Company* company = [self.companyList objectAtIndex:companyToDelete];
     
@@ -231,9 +218,7 @@ static DataAccess *sharedDataAccess = nil;
     
     [self.companyList removeObjectAtIndex: companyToDelete];
     
-    if(deleteCompanyinDB)
-    {
-        NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+          NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *docsPath = [paths objectAtIndex:0];
         NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
         NSLog(@"%@",dbPath);
@@ -274,7 +259,7 @@ static DataAccess *sharedDataAccess = nil;
                 }
 
             }
-        }
+       
     
         sqlite3_close(database);
     
@@ -303,22 +288,9 @@ static DataAccess *sharedDataAccess = nil;
 {
     return [self.companyList  objectAtIndex:companyIndex];
 }
--(void)insertCompany :(NSUInteger)insertAtIndex :(Company*)companyToInsert
-{
-    [self.companyList insertObject:companyToInsert atIndex:insertAtIndex];
-}
 
--(NSString*)getCompanyName : (Company*)company
-{
-    return company.companyName;
-}
 
--(Product*)getCompanyProducts : (Company*)company : (NSUInteger)index
-{
-    return [company.listOfCompanyProducts objectAtIndex:index];
-}
-
--(void)deleteCompanyProducts :(NSUInteger)IndexToDelete : (Company*)company : (BOOL)deleteProductFromDb
+-(void)deleteCompanyProducts :(NSUInteger)IndexToDelete : (Company*)company
 {
     
     Product* productToDelete = [company.listOfCompanyProducts objectAtIndex:IndexToDelete];
@@ -337,22 +309,39 @@ static DataAccess *sharedDataAccess = nil;
     
     [company.listOfCompanyProducts removeObjectAtIndex: IndexToDelete];
 
-    if(deleteProductFromDb)
-    {
-        NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *docsPath = [paths objectAtIndex:0];
-        NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-        NSLog(@"%@",dbPath);
+    
+    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docsPath = [paths objectAtIndex:0];
+    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
+    NSLog(@"%@",dbPath);
         
-        if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
+    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
+    {
+            
+        NSString *deleteProduct = [NSString stringWithFormat:@"DELETE FROM products WHERE product_id = %i",index];
+        NSLog(@"%@",deleteProduct);
+            
+        const char *sqlRowDelete = [deleteProduct  UTF8String];
+        char *error;
+        if (sqlite3_exec(database, sqlRowDelete, NULL, NULL, &error)==SQLITE_OK)
         {
+            NSLog(@"Update done .. ");
+        }
+        else
+        {
+            NSLog(@"Error in update.. ");
+        }
             
-            NSString *deleteProduct = [NSString stringWithFormat:@"DELETE FROM products WHERE product_id = %i",index];
-            NSLog(@"%@",deleteProduct);
+        NSLog(@"RowIndex=%i and Comapnylist = %lu",rowIndex,(unsigned long)[self.companyList count]);
             
-            const char *sqlRowDelete = [deleteProduct  UTF8String];
+        for(int i = (rowIndex+1); i<= ([company.listOfCompanyProducts count]+1); i++)
+        {
+            NSString *updateRowIndex = [NSString stringWithFormat:@"UPDATE products SET product_rowindex = %d WHERE product_rowindex = %i", (i-1), i];
+                
+            const char *sqlRowIndexUpdate = [updateRowIndex UTF8String];
             char *error;
-            if (sqlite3_exec(database, sqlRowDelete, NULL, NULL, &error)==SQLITE_OK)
+                
+            if (sqlite3_exec(database, sqlRowIndexUpdate, NULL, NULL, &error)==SQLITE_OK)
             {
                 NSLog(@"Update done .. ");
             }
@@ -360,27 +349,9 @@ static DataAccess *sharedDataAccess = nil;
             {
                 NSLog(@"Error in update.. ");
             }
-            
-            NSLog(@"RowIndex=%i and Comapnylist = %lu",rowIndex,(unsigned long)[self.companyList count]);
-            
-            for(int i = (rowIndex+1); i<= ([company.listOfCompanyProducts count]+1); i++)
-            {
-                NSString *updateRowIndex = [NSString stringWithFormat:@"UPDATE products SET product_rowindex = %d WHERE product_rowindex = %i", (i-1), i];
                 
-                const char *sqlRowIndexUpdate = [updateRowIndex UTF8String];
-                char *error;
-                
-                if (sqlite3_exec(database, sqlRowIndexUpdate, NULL, NULL, &error)==SQLITE_OK)
-                {
-                    NSLog(@"Update done .. ");
-                }
-                else
-                {
-                    NSLog(@"Error in update.. ");
-                }
-                
-            }
         }
+       
         sqlite3_close(database);
         
         if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
@@ -404,12 +375,7 @@ static DataAccess *sharedDataAccess = nil;
     }
 }
 
--(void)insertCompanyProducts : (Company*)company :(Product*)productToInsert : (NSUInteger)index
-{
-    
-    productToInsert.productRowIndex = index+1.0;
-    [company.listOfCompanyProducts insertObject:productToInsert atIndex:index];
-}
+
 
 -(void)addCompany : (NSString*)companyName :(NSString*)companyCode :(id<DataAccessDelegate>)delegate
 {
@@ -494,6 +460,7 @@ static DataAccess *sharedDataAccess = nil;
     [company.compnayCode retain];
     
     [self.companyList addObject:company];
+    [company release];
 }
 
 -(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company
@@ -561,6 +528,7 @@ static DataAccess *sharedDataAccess = nil;
 {
     Company *updateCompany = company;
     
+    // avoid repetative codes - put it into a method to return the path
     NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docsPath = [paths objectAtIndex:0];
     NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
@@ -593,9 +561,9 @@ static DataAccess *sharedDataAccess = nil;
     return TRUE;
 }
 
--(BOOL)updateProductDetails : (Product*)productToUpdate : (Company*)company
+-(BOOL)updateProductDetails : (Product*)productToUpdate
 {
-    Company *updateCompany = company;
+    
     Product *updateProduct = productToUpdate;
     
     NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -620,21 +588,45 @@ static DataAccess *sharedDataAccess = nil;
     }
     sqlite3_close(database);
     
-    [updateCompany.listOfCompanyProducts removeObjectAtIndex: productToUpdate.productRowIndex-1];
-    [company.listOfCompanyProducts insertObject:productToUpdate atIndex:productToUpdate.productRowIndex-1];
+    // lines below are not required as parameter product is reference to the same product in the list
+  //  [updateCompany.listOfCompanyProducts removeObjectAtIndex: productToUpdate.productRowIndex-1];
+   // [company.listOfCompanyProducts insertObject:productToUpdate atIndex:productToUpdate.productRowIndex-1];
     
-    [productToUpdate retain];
+    //[productToUpdate retain];
 
     return TRUE;
 }
 
--(void)updateDbRowIndex
+
+
+-(void)moveCompanyRow :(NSUInteger)fromIndex : (NSUInteger)toIndex
 {
+    Company* companyToMove = [self.companyList objectAtIndex:fromIndex];
+    
+  //  Company* company = [self.companyList objectAtIndex:fromIndex];
+    
+    for (int i = 0;i<[self.companyList count];i++)
+    {
+        Company* companyTempIndex = [self.companyList objectAtIndex:i];
+        
+        if(companyTempIndex.companyRowIndex > companyToMove.companyRowIndex)
+        {
+            companyTempIndex.companyRowIndex--;
+            
+        }
+    }
+    
+   // int index = company.companyId;
+   // int rowIndex = company.companyRowIndex;
+    
+    [self.companyList removeObjectAtIndex: fromIndex];
+    [self.companyList insertObject:companyToMove atIndex:toIndex];
+    
     NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docsPath = [paths objectAtIndex:0];
     NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
     NSLog(@"%@",dbPath);
-   
+    
     if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
     {
         for(int j = 0;j<[self.companyList count];j++)
@@ -643,9 +635,9 @@ static DataAccess *sharedDataAccess = nil;
             
             
             int index = companyToUpdate.companyId;
-
+            
             NSString *queryUpdateRowIndex = [NSString stringWithFormat:@"UPDATE companies SET company_rowindex = %d WHERE company_id = %i", j+1, index];
-           
+            
             const char *sqlRowInd = [queryUpdateRowIndex  UTF8String];
             char *error;
             if (sqlite3_exec(database, sqlRowInd, NULL, NULL, &error)==SQLITE_OK)
@@ -661,8 +653,29 @@ static DataAccess *sharedDataAccess = nil;
     }
 }
 
--(void)updateDbRowIndexProduct :(Company*)company
+
+-(void)moveProductRow : (NSUInteger)fromIndex : (NSUInteger)toIndex :(Company*)company
 {
+    Product* productToDelete = [company.listOfCompanyProducts objectAtIndex:fromIndex];
+    
+    for (int i = 0;i<[company.listOfCompanyProducts count];i++)
+    {
+        Product* ProductTempIndex = [company.listOfCompanyProducts objectAtIndex:i];
+        
+        if(ProductTempIndex.productRowIndex > productToDelete.productRowIndex)
+        {
+            ProductTempIndex.productRowIndex--;
+        }
+    }
+    int index = productToDelete.productId;
+   // int rowIndex = productToDelete.productRowIndex;
+    
+    [company.listOfCompanyProducts removeObjectAtIndex: fromIndex];
+    
+    productToDelete.productRowIndex = index+1.0;
+    [company.listOfCompanyProducts insertObject:productToDelete atIndex:toIndex];
+    
+    
     NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docsPath = [paths objectAtIndex:0];
     NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
@@ -691,7 +704,14 @@ static DataAccess *sharedDataAccess = nil;
         }
         sqlite3_close(database);
     }
+
+
+
+
+
 }
+
+
 
 - (void)dealloc {
     sqlite3_close(database);

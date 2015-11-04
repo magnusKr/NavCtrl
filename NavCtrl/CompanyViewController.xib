@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="qcdDemoViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CompanyViewController">
             <connections>
                 <outlet property="childVC" destination="Xwu-Pd-0Xh" id="3dj-HE-T9T"/>
                 <outlet property="view" destination="8" id="11"/>
@@ -22,7 +22,7 @@
             </connections>
             <point key="canvasLocation" x="1122" y="207"/>
         </tableView>
-        <viewController id="Xwu-Pd-0Xh" customClass="ChildViewController">
+        <viewController id="Xwu-Pd-0Xh" customClass="CompanyProductsViewController">
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
             <point key="canvasLocation" x="287" y="207"/>
         </viewController>

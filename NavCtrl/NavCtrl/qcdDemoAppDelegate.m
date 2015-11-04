@@ -7,7 +7,7 @@
 //
 
 #import "qcdDemoAppDelegate.h"
-#import "qcdDemoViewController.h"
+#import "CompanyViewController.h"
 
 @implementation qcdDemoAppDelegate
 
@@ -16,8 +16,8 @@
     
     // Override point for customization after application launch.
     UIViewController *rootController =
-    [[qcdDemoViewController alloc]
-     initWithNibName:@"qcdDemoViewController" bundle:nil];
+    [[CompanyViewController alloc]
+     initWithNibName:@"CompanyViewController" bundle:nil];
     
     self.navigationController = [[UINavigationController alloc]
                             initWithRootViewController:rootController];

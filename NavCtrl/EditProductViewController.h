@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "qcdDemoViewController.h"
+#import "CompanyViewController.h"
 
 
 @interface EditProductViewController : UIViewController

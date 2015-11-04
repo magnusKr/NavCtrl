@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "qcdDemoViewController.h"
+#import "CompanyViewController.h"
 
 @interface AddCompanyViewController : UIViewController
 @property (nonatomic, retain) id <DataAccessDelegate> delegate;

@@ -12,6 +12,7 @@
 @interface Company : NSObject
 
 @property (nonatomic, retain) Product* companyProducts;
+
 @property (nonatomic, retain) NSMutableArray* listOfCompanyProducts;
 
 @property int companyId;

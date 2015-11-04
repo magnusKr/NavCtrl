@@ -6,14 +6,14 @@
 //  Copyright (c) 2013 Aditya Narayan. All rights reserved.
 //
 
-#import "ChildViewController.h"
+#import "CompanyProductsViewController.h"
 
 
-@interface ChildViewController ()
+@interface CompanyProductsViewController ()
 
 @end
 
-@implementation ChildViewController
+@implementation CompanyProductsViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -28,11 +28,8 @@
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
      self.clearsSelectionOnViewWillAppear = NO;
  
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addProduct)];
     
     UIBarButtonItem *editButton = self.editButtonItem;
@@ -43,31 +40,30 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.title = self.company.companyName;
     [self.tableView reloadData];
     
-    [super viewWillAppear:animated];
     
   }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-//#warning Potentially incomplete method implementation.
-    // Return the number of sections.
+
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-//#warning Incomplete method implementation.
-    // Return the number of rows in the section.
+
     
     return[self.company.listOfCompanyProducts count];
 
@@ -81,7 +77,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    Product *product = [[DataAccess sharedData]getCompanyProducts:self.company :[indexPath row]];
+    Product *product = [self.company.listOfCompanyProducts objectAtIndex: indexPath.row];
                         
     cell.textLabel.text = product.productName;
     cell.imageView.image = [UIImage imageNamed:product.productImage];
@@ -93,10 +89,6 @@
     lpgr.delegate = self;
     [self.tableView addGestureRecognizer:lpgr];
     [lpgr release];
-
-    
-   
-
     
     return cell;
 }
@@ -137,12 +129,9 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         
-        [[DataAccess sharedData]deleteCompanyProducts:[indexPath row] :self.company:TRUE];
+        [[DataAccess sharedData]deleteCompanyProducts:[indexPath row] :self.company];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-   // else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    //}
+    }
 }
 
 
@@ -150,15 +139,10 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    Product *productToMove = [[DataAccess sharedData]getCompanyProducts:self.company :fromIndexPath.row];
     
-    [[DataAccess sharedData]deleteCompanyProducts:fromIndexPath.row :self.company :FALSE];
+    [[DataAccess sharedData]moveProductRow:fromIndexPath.row :toIndexPath.row :self.company];
     
-    [[DataAccess sharedData]insertCompanyProducts:self.company :productToMove :toIndexPath.row];
-    
-    [[DataAccess sharedData]updateDbRowIndexProduct:self.company];
-    
-   }
+}
 
 
 
@@ -179,17 +163,17 @@
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ProductsViewController *detailViewController = [[ProductsViewController alloc] initWithNibName:@"ProductsViewController" bundle:nil];
+    ProductViewController *detailViewController = [[ProductViewController alloc] initWithNibName:@"ProductViewController" bundle:nil];
     
-    Product *product = [[DataAccess sharedData]getCompanyProducts:self.company :indexPath.row];
-    
+    Product *product = [self.company.listOfCompanyProducts objectAtIndex:indexPath.row];
+ 
     
     detailViewController.someUrlToLoad =  product.productUrl;
 
     [self.navigationController pushViewController:detailViewController animated:YES];
     
-    [ProductsViewController release];
-//    [product release];
+    
+    [detailViewController release];
 }
 
 
@@ -200,10 +184,12 @@
     addProductVC.company = self.company;
     
     [self.navigationController pushViewController:addProductVC animated:YES];
+    
+    [addProductVC release];
+
 }
 -(void)dealloc
 {
-    [AddProductViewController release];
     [_company release];
     
     [super dealloc];

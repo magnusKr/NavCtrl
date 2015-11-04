@@ -6,13 +6,13 @@
 //  Copyright © 2015 Aditya Narayan. All rights reserved.
 //
 
-#import "ProductsViewController.h"
+#import "ProductViewController.h"
 
-@interface ProductsViewController ()
+@interface ProductViewController ()
 
 @end
 
-@implementation ProductsViewController
+@implementation ProductViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -22,10 +22,16 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
+    [super viewWillAppear:animated];
+    
+    
+    // need to release the variables allocated in method
     
     WKWebViewConfiguration *theConfiguration = [[WKWebViewConfiguration alloc] init];
     
     WKWebView *webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:theConfiguration];
+    
+    [theConfiguration release];
     
     webView.navigationDelegate = self;
 

@@ -29,23 +29,19 @@
 @property (nonatomic,retain) NSURLSessionConfiguration* defaultConfigObject;
 @property (nonatomic,retain) NSURLSession *defaultSession;
 
--(NSMutableArray*)getCompanies;
+-(NSUInteger)getNumberOfCompanies;
 -(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate;
--(void)deleteCompany :(NSUInteger)companyToDelete :(BOOL)deleteCompanyinDB;
--(void)insertCompany :(NSUInteger)insertAtIndex :(Company*)companyToInsert;
+-(void)deleteCompany :(NSUInteger)companyToDelete;
+-(void)moveCompanyRow :(NSUInteger)fromIndex : (NSUInteger)toIndex;
+-(void)moveProductRow : (NSUInteger)fromIndex : (NSUInteger)toIndex :(Company*)company;
 -(Company*)getCompany :(NSUInteger)companyIndex;
--(NSString*)getCompanyName : (Company*)company;
--(Product*)getCompanyProducts : (Company*)company : (NSUInteger)index;
--(void)deleteCompanyProducts :(NSUInteger)IndexToDelete : (Company*)company :(BOOL)deleteProductFromDb;
--(void)insertCompanyProducts : (Company*)company :(Product*)productToInsert : (NSUInteger)index;
-- (void)createEditableCopyOfDatabaseIfNeeded;
+-(void)deleteCompanyProducts :(NSUInteger)IndexToDelete : (Company*)company;
+-(void)createEditableCopyOfDatabaseIfNeeded;
 -(void)addCompany : (NSString*)companyName :(NSString*)companyCode :(id<DataAccessDelegate>)delegate;
--(void)updateDbRowIndex;
--(void)updateDbRowIndexProduct :(Company*)company;
 -(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company;
 -(BOOL)updateCompanyDetails:(Company*)company andIndex:(NSUInteger)index;
--(BOOL)updateProductDetails : (Product*)productToUpdate : (Company*)company;
--(NSString*)getQuoteForCompany : (Company*)company;
+-(BOOL)updateProductDetails : (Product*)productToUpdate;
+
 
 + (id)sharedData;
 

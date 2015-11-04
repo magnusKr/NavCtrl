@@ -6,15 +6,15 @@
 //  Copyright (c) 2013 Aditya Narayan. All rights reserved.
 //
 
-#import "qcdDemoViewController.h"
+#import "CompanyViewController.h"
 
 
 
-@interface qcdDemoViewController ()
+@interface CompanyViewController ()
 
 @end
 
-@implementation qcdDemoViewController
+@implementation CompanyViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -36,13 +36,14 @@
  
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.companyList = [[DataAccess sharedData] getCompanies];
-    
     [[DataAccess sharedData] getCompanyQuoteWithDelegate:self];
     
     self.title = @"Mobile device makers";
     
     self.tableView.allowsMultipleSelectionDuringEditing = NO;
+    
+    // if you use this, you dont need to check deque and allocatacte cell in cellAtIndexPath
+    //[self.tableView registerClass:<#(nullable Class)#> forCellReuseIdentifier:<#(nonnull NSString *)#>];
     
 }
 -(void)reload{
@@ -52,9 +53,9 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self.tableView reloadData];
-    [super viewWillAppear:animated];
-
+   [super viewWillAppear:animated];
+   [self.tableView reloadData];
+ 
 }
 
 - (void)didReceiveMemoryWarning
@@ -67,16 +68,14 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-//#warning Potentially incomplete method implementation.
-    // Return the number of sections.
+
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-//#warning Incomplete method implementation.
 
-    return  [[[DataAccess sharedData] getCompanies]count];
+    return  [[DataAccess sharedData] getNumberOfCompanies];
 
 }
 
@@ -91,6 +90,10 @@
     // Configure the cell...
     Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
     
+    
+    // every time cellForRowAtIndexPath gets called, UILongPressGestureRecognizer is set to tableview
+    // it should not be in this method as it is not attached to cell
+    
     UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
                                           initWithTarget:self action:@selector(handleLongPress:)];
     lpgr.minimumPressDuration = 1.0; //seconds
@@ -98,11 +101,15 @@
     [self.tableView addGestureRecognizer:lpgr];
     [lpgr release];
         
-    cell.textLabel.text = [[DataAccess sharedData] getCompanyName:company];
+    cell.textLabel.text = company.companyName;
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
-    cell.detailTextLabel.text = [[DataAccess sharedData] getQuoteForCompany:company];
+    cell.detailTextLabel.text = company.compnayStockPrice;
+    
+    
     
     return cell;
+    
+    
 }
 
 - (void)handleLongPress:(UILongPressGestureRecognizer*)gesture{
@@ -125,8 +132,6 @@
     return YES;
 }
 
-
-
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -134,7 +139,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         
-        [[DataAccess sharedData] deleteCompany:indexPath.row : TRUE];
+        [[DataAccess sharedData] deleteCompany:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
     }
@@ -143,11 +148,8 @@
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    Company *companyToMove = [[DataAccess sharedData] getCompany:fromIndexPath.row];
-    
-    [[DataAccess sharedData] deleteCompany:fromIndexPath.row : FALSE];
-    [[DataAccess sharedData] insertCompany:toIndexPath.row :companyToMove];
-    [[DataAccess sharedData] updateDbRowIndex];
+    [[DataAccess sharedData] moveCompanyRow:fromIndexPath.row :toIndexPath.row];
+
 }
 
 
@@ -167,7 +169,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
-    self.childVC.title = [[DataAccess sharedData] getCompanyName:company];
+    // extra method [[DataAccess sharedData] getCompanyName:company];
+    //self.childVC.title = [[DataAccess sharedData] getCompanyName:company]; // this should be done inside childvc
     self.childVC.company = company;
     
     [self.navigationController pushViewController:self.childVC animated:YES];

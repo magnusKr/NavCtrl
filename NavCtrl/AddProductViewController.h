@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "qcdDemoViewController.h"
+#import "CompanyViewController.h"
 
 @interface AddProductViewController : UIViewController
 @property (nonatomic,retain) Company* company;

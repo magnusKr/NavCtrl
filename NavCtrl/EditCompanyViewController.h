@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "qcdDemoViewController.h"
+#import "CompanyViewController.h"
 
 @interface EditCompanyViewController : UIViewController
 @property NSUInteger companyIndex;
