@@ -36,6 +36,10 @@
         _productRowIndex = productRowId;
         _productId = productId;
         
+        [_productName retain];
+        [_productImage retain];
+        [_productUrl retain];
+        
         
     }
     return self;

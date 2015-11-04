@@ -105,10 +105,8 @@
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
     cell.detailTextLabel.text = company.compnayStockPrice;
     
-    
-    
     return cell;
-    
+   
     
 }
 

@@ -50,7 +50,7 @@ static DataAccess *sharedDataAccess = nil;
     {
         NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
         self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
-                                                                
+        [text release];
         int i = 0;
         int j = 0;
                                                               
@@ -118,10 +118,7 @@ static DataAccess *sharedDataAccess = nil;
                  }
                  
                   Company *company = [[Company alloc] initWithUniqueId:uniqueId andcompanyname:companyName andcompanyLogo:companyLogo andcompanycode:companyCode andcompanyrowindex:companyRowInd];
-                 
-                 [company.companyLogo retain];
-                 [company.companyName retain];
-                 [company.compnayCode retain];
+
                  
                  company.listOfCompanyProducts = [[[NSMutableArray alloc]init] autorelease];
                  
@@ -147,12 +144,12 @@ static DataAccess *sharedDataAccess = nil;
                           Product *product = [[Product alloc]initWithProductNameandIndex:productName andproductImage:productImage andProductUrl:productURL andproductrowindex:productRowId andproductId:productId];
 
                           [company.listOfCompanyProducts addObject:product];
-                          [productName retain];
-                          [productImage retain];
-                          [productURL retain];
+                          [product release];
+
                       }
                   }
                     [self.companyList addObject:company];
+                    [company release];
                 }
             }
         sqlite3_close(database);
@@ -455,10 +452,7 @@ static DataAccess *sharedDataAccess = nil;
     
     }
     company.listOfCompanyProducts = [[NSMutableArray alloc]init];
-    [company.companyName retain];
-    [company.companyLogo retain];
-    [company.compnayCode retain];
-    
+
     [self.companyList addObject:company];
     [company release];
 }
@@ -518,9 +512,10 @@ static DataAccess *sharedDataAccess = nil;
     sqlite3_close(database);
 
     [company.listOfCompanyProducts addObject:product];
+    [product release];
     
-    [productName retain];
-    [productUrl retain];
+//    [productName retain];
+//    [productUrl retain];
 }
 
 

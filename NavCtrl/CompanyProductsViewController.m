@@ -107,10 +107,7 @@
         editProductVC.company = self.company;
         [self.navigationController pushViewController:editProductVC animated:YES];
         
-
     }
-    
-    
 }
 
 // Override to support conditional editing of the table view.
