@@ -54,7 +54,7 @@ static DataAccess *sharedDataAccess = nil;
         int i = 0;
         int j = 0;
                                                               
-        while (j < [self.self.companyList count]){
+        while (j < [self.companyList count]){
             Company* company = [self.companyList objectAtIndex:j];
                                                                     
             if(company.compnayCode != nil)
@@ -67,7 +67,7 @@ static DataAccess *sharedDataAccess = nil;
         }
                                                                 
         [delegate reload];
-                                                                
+    
     }
                                                             
     }];
@@ -83,78 +83,10 @@ static DataAccess *sharedDataAccess = nil;
     {
         self.quoteUrl = @"https://finance.yahoo.com/d/quotes.csv?s=";
         _companyList = [[NSMutableArray alloc]init];
-        [self createEditableCopyOfDatabaseIfNeeded];
-        
-        NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *docsPath = [paths objectAtIndex:0];
-        NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
+        _companyCoreDataList = [[NSMutableArray alloc]init];
         
         
-        if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK) {
-        const char *sqlCompany = "SELECT * FROM companies ORDER BY company_rowindex";
-        
-        sqlite3_stmt *statement;
-        
-        if (sqlite3_prepare_v2(database, sqlCompany, -1, &statement, NULL) == SQLITE_OK)
-        {
-             while (sqlite3_step(statement) == SQLITE_ROW)
-             {
-                 NSString *companyName =   [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 0)];
-                 NSString *companyLogo =   [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 1)];
-                 NSString *companyCode;
-                 int uniqueId = sqlite3_column_int(statement, 3);
-                 int companyRowInd = sqlite3_column_int(statement, 4);
-                 
-                 if(sqlite3_column_text(statement, 2)){
-                     companyCode =   [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 2)];
-                     if(uniqueId != 0){
-                         self.quoteUrl = [self.quoteUrl stringByAppendingString:@"+"];
-                     }
-                     self.quoteUrl = [self.quoteUrl stringByAppendingString:companyCode];
-                 }
-                 else
-                 {
-                    companyCode = @"-";
-                 }
-                 
-                  Company *company = [[Company alloc] initWithUniqueId:uniqueId andcompanyname:companyName andcompanyLogo:companyLogo andcompanycode:companyCode andcompanyrowindex:companyRowInd];
-
-                 
-                 company.listOfCompanyProducts = [[[NSMutableArray alloc]init] autorelease];
-                 
-                 sqlite3_close(database);
-                 
-                 sqlite3_stmt *statementProduct;
-                 
-                 NSString *sqlProducts = @"SELECT * FROM products WHERE company_id = ";
-                 NSString *urlStr = [sqlProducts stringByAppendingFormat:@"%i ORDER BY product_rowindex", uniqueId];
-
-                 const char *sqlProduct = [urlStr UTF8String];
-                 
-                  if (sqlite3_prepare_v2(database, sqlProduct, -1, &statementProduct, NULL) == SQLITE_OK)
-                  {
-                      while (sqlite3_step(statementProduct) == SQLITE_ROW)
-                      {
-                          NSString *productName =   [NSString stringWithUTF8String:(char *)sqlite3_column_text(statementProduct, 0)];
-                          NSString *productImage =  [NSString stringWithUTF8String:(char *)sqlite3_column_text(statementProduct, 1)];
-                          NSString *productURL =    [NSString stringWithUTF8String:(char *)sqlite3_column_text(statementProduct, 2)];
-                          int productId = sqlite3_column_int(statementProduct, 3);
-                          int productRowId = sqlite3_column_int(statementProduct, 5);
-                          
-                          Product *product = [[Product alloc]initWithProductNameandIndex:productName andproductImage:productImage andProductUrl:productURL andproductrowindex:productRowId andproductId:productId];
-
-                          [company.listOfCompanyProducts addObject:product];
-                          [product release];
-
-                      }
-                  }
-                    [self.companyList addObject:company];
-                    [company release];
-                }
-            }
-        sqlite3_close(database);
-        
-        }
+        [self initDataModel];
         
         self.defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
         self.defaultSession = [NSURLSession sessionWithConfiguration: self.defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
@@ -162,31 +94,248 @@ static DataAccess *sharedDataAccess = nil;
     return self;
 }
 
-- (void)createEditableCopyOfDatabaseIfNeeded {
-   
-    BOOL success;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *writableDBPath = [documentsDirectory stringByAppendingPathComponent:@"myappdata.sqlite"];
-    NSLog(@"%@",writableDBPath);
+- (void)initDataModel {
     
-    success = [fileManager fileExistsAtPath:writableDBPath];
-    if (success)
-        return;
+    //my model scheme. Returns a model created by merging all the models found in given bundles
+    model = [NSManagedObjectModel mergedModelFromBundles:nil];
+    
+    //psc serve to mediate between the persistent store or stores and the managed object context or contexts
+    NSPersistentStoreCoordinator *psc =
+    [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];
+    
+    //Get path to storage
+    NSString *path = [self archivePath];
+    NSURL *storeURL = [NSURL fileURLWithPath:path];
+    BOOL dbExist = [[NSFileManager defaultManager] fileExistsAtPath:[storeURL path]];
+    NSLog(@"URl:%@",storeURL);
+    
+    
+    NSError *error = nil;
+    
+     //To load a model, you provide an URL to the constructor(Persisten store coordinator)
+    if(![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]){
+        [NSException raise:@"Open failed" format:@"Reason: %@", [error localizedDescription]];
+    }
 
-    NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"myappdata.sqlite"];
+    context = [[NSManagedObjectContext alloc] init];
+    [context setPersistentStoreCoordinator:psc];
+    [context setUndoManager:nil];
+   
     
-    NSLog(@"%@",defaultDBPath);
-    if([fileManager fileExistsAtPath:defaultDBPath])
+    if(!dbExist)
     {
-        NSLog(@"File Found..");
+            NSLog(@"FILE NOT EXISTS!!!");
+
+            CompanyCd *commapnyCDOne = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
+            
+            [commapnyCDOne setCompanyCdName:@"Apple mobile devices"];
+            [commapnyCDOne setCompanyCdLogo:@"apple.png"];
+            [commapnyCDOne setCompanyCdCode:@"AAPL"];
+            [commapnyCDOne setCompanyCdRowIndex: [NSNumber numberWithInt:1]];
+        
+        
+            ProductCd *productOne = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+        
+            [productOne setProductCdName:@"iPad"];
+            [productOne setProductCdLogo:@"iPad.png"];
+            [productOne setProductCdUrl:@"https://www.apple.com/shop/buy-ipad/ipad-air-2"];
+            [productOne setProductCdRowIndex:[NSNumber numberWithInt:1]];
+        
+        
+            [commapnyCDOne addProductsObject:productOne];
+
+        
+            ProductCd *productTwo = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productTwo setProductCdName:@"iPod Touch"];
+            [productTwo setProductCdLogo:@"ipodtouch.png"];
+            [productTwo setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone6"];
+            [productTwo setProductCdRowIndex:[NSNumber numberWithInt:2]];
+        
+            [commapnyCDOne addProductsObject:productTwo];
+
+     
+
+            ProductCd *productThree = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productThree setProductCdName:@"iPhone"];
+            [productThree setProductCdLogo:@"iphone.png"];
+            [productThree setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productThree setProductCdRowIndex:[NSNumber numberWithInt:3]];
+        
+            [commapnyCDOne addProductsObject:productThree];
+
+
+        
+            CompanyCd *commapnyCDTwo = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
+        
+            [commapnyCDTwo setCompanyCdName:@"Samsung mobile devices"];
+            [commapnyCDTwo setCompanyCdLogo:@"samsung.png"];
+            [commapnyCDTwo setCompanyCdCode:@"GOOG"];
+            [commapnyCDTwo setCompanyCdRowIndex: [NSNumber numberWithInt:2]];
+        
+        
+            ProductCd *productFour = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productFour setProductCdName:@"Galaxy 1"];
+            [productFour setProductCdLogo:@"galaxys4.png"];
+            [productFour setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productFour setProductCdRowIndex:[NSNumber numberWithInt:1]];
+        
+            [commapnyCDTwo addProductsObject:productFour];
+        
+            ProductCd *productFive = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productFive setProductCdName:@"Galaxy 2"];
+            [productFive setProductCdLogo:@"galaxys5.png"];
+            [productFive setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productFive setProductCdRowIndex:[NSNumber numberWithInt:2]];
+        
+            [commapnyCDTwo addProductsObject:productFive];
+        
+        
+            ProductCd *productSix = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productSix setProductCdName:@"Galaxy 3"];
+            [productSix setProductCdLogo:@"galaxys6.png"];
+            [productSix setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productSix setProductCdRowIndex:[NSNumber numberWithInt:3]];
+        
+            [commapnyCDTwo addProductsObject:productSix];
+
+
+        
+        
+            CompanyCd *commapnyCDThree = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
+        
+            [commapnyCDThree setCompanyCdName:@"Motorola mobile devices"];
+            [commapnyCDThree setCompanyCdLogo:@"motorola.png"];
+            [commapnyCDThree setCompanyCdCode:@"MSFT"];
+            [commapnyCDThree setCompanyCdRowIndex: [NSNumber numberWithInt:3]];
+        
+        
+        
+        
+            ProductCd *productSeven = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productSeven setProductCdName:@"Motoroala 1"];
+            [productSeven setProductCdLogo:@"motorola1.png"];
+            [productSeven setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productSeven setProductCdRowIndex:[NSNumber numberWithInt:1]];
+        
+            [commapnyCDThree addProductsObject:productSeven];
+        
+        
+            ProductCd *productEight = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productEight setProductCdName:@"Motoroala 2"];
+            [productEight setProductCdLogo:@"motorola2.png"];
+            [productEight setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productEight setProductCdRowIndex:[NSNumber numberWithInt:2]];
+        
+            [commapnyCDThree addProductsObject:productEight];
+        
+        
+            ProductCd *productNine = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productNine setProductCdName:@"Motoroala 3"];
+            [productNine setProductCdLogo:@"motorola3.jpeg"];
+            [productNine setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productNine setProductCdRowIndex:[NSNumber numberWithInt:3]];
+        
+            [commapnyCDThree addProductsObject:productNine];
+
+
+        
+            CompanyCd *commapnyCDFour = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
+        
+            [commapnyCDFour setCompanyCdName:@"HTC mobile devices"];
+            [commapnyCDFour setCompanyCdLogo:@"htc.png"];
+            [commapnyCDFour setCompanyCdCode:@"-"];
+            [commapnyCDFour setCompanyCdRowIndex: [NSNumber numberWithInt:4]];
+        
+        
+            ProductCd *productTen = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productTen setProductCdName:@"Htc 1"];
+            [productTen setProductCdLogo:@"htc1.png"];
+            [productTen setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productTen setProductCdRowIndex:[NSNumber numberWithInt:1]];
+        
+            [commapnyCDFour addProductsObject:productTen];
+        
+            ProductCd *productEleven = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productEleven setProductCdName:@"Htc 2"];
+            [productEleven setProductCdLogo:@"htc2.png"];
+            [productEleven setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productEleven setProductCdRowIndex:[NSNumber numberWithInt:2]];
+        
+            [commapnyCDFour addProductsObject:productEleven];
+        
+        
+            ProductCd *productTwelve = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+            [productTwelve setProductCdName:@"Htc 3"];
+            [productTwelve setProductCdLogo:@"htc3.png"];
+            [productTwelve setProductCdUrl:@"https://www.apple.com/shop/buy-iphone/iphone5s"];
+            [productTwelve setProductCdRowIndex:[NSNumber numberWithInt:3]];
+        
+            [commapnyCDFour addProductsObject:productTwelve];
+
+            [self saveCoreData];
+
     }
-    success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:&error];
-    if (!success) {
-        NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
+
+
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc]init];
+    
+    NSEntityDescription *e = [[model entitiesByName] objectForKey:@"CompanyCd"];
+    [request setEntity:e];
+    
+    NSSortDescriptor *rowIndexSort = [[NSSortDescriptor alloc] initWithKey:@"companyCdRowIndex" ascending:YES];
+
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:rowIndexSort, nil];
+    
+    [request setSortDescriptors:sortDescriptors];
+    
+    NSArray *result = [context executeFetchRequest:request error:&error];
+    
+    if(!result){
+        [NSException raise:@"Fetch Failed" format:@"Reason: %@", [error localizedDescription]];
     }
+    
+
+    
+    int i;
+    for (i=0;i<[result count];i++)
+    {
+        CompanyCd *c = [result objectAtIndex:i];
+      
+        int rowIndex = [c.companyCdRowIndex intValue];
+        
+        Company *company = [[Company alloc] initWithUniqueId:1 andcompanyname:c.companyCdName andcompanyLogo:c.companyCdLogo andcompanycode:c.companyCdCode andcompanyrowindex:rowIndex];
+        
+        if(company.compnayCode != nil && ![company.compnayCode isEqualToString:@"-"]){
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:company.compnayCode];
+            self.quoteUrl = [self.quoteUrl stringByAppendingString:@","];
+        }
+        
+        
+        company.listOfCompanyProducts = [[NSMutableArray alloc]init];
+        for(ProductCd* productCd in c.products) {
+             int rowIndex = [productCd.productCdRowIndex intValue];
+            Product* product = [[Product alloc]initWithProductNameandIndex:productCd.productCdName andproductImage:productCd.productCdLogo andProductUrl:productCd.productCdUrl andproductrowindex:rowIndex andproductId:1];
+            
+                        
+            [company.listOfCompanyProducts addObject:product];
+          
+            [product release];
+            
+        }
+        [company.listOfCompanyProducts sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"productRowIndex" ascending:YES]]];
+        
+        [self.companyList addObject:company];
+        [self.companyCoreDataList addObject:c];
+    
+    }
+}
+
+-(NSString*) archivePath
+{
+    NSArray *documentsDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [documentsDirectories objectAtIndex:0];
+    return [documentsDirectory stringByAppendingPathComponent:@"storeses.data"];
 }
 
 -(NSUInteger)getNumberOfCompanies
@@ -199,91 +348,36 @@ static DataAccess *sharedDataAccess = nil;
 {
     Company* company = [self.companyList objectAtIndex:companyToDelete];
     
+    CompanyCd* companyCd = [self.companyCoreDataList objectAtIndex:companyToDelete];
+
+    [context deleteObject:companyCd];
+    
+    [self saveCoreData];
+    
+    
     for (int i = 0;i<[self.companyList count];i++)
     {
         Company* companyTempIndex = [self.companyList objectAtIndex:i];
+        CompanyCd* companyCdTempIndex = [self.companyCoreDataList objectAtIndex:i];
         
         if(companyTempIndex.companyRowIndex > company.companyRowIndex)
         {
             companyTempIndex.companyRowIndex--;
-        
+            [companyCdTempIndex setValue:[NSNumber numberWithInt:companyTempIndex.companyRowIndex] forKey:@"CompanyCdRowIndex"];
+            [self saveCoreData];
         }
     }
-    
-    int index = company.companyId;
-    int rowIndex = company.companyRowIndex;
-    
+    [self.companyCoreDataList removeObjectAtIndex:companyToDelete];
     [self.companyList removeObjectAtIndex: companyToDelete];
     
-          NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *docsPath = [paths objectAtIndex:0];
-        NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-        NSLog(@"%@",dbPath);
     
-        if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-        {
-        
-            NSString *deleteCompany = [NSString stringWithFormat:@"DELETE FROM companies WHERE company_id = %i",index];
-            NSLog(@"%@",deleteCompany);
-        
-            const char *sqlRowDelete = [deleteCompany  UTF8String];
-            char *error;
-            if (sqlite3_exec(database, sqlRowDelete, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-        
-            NSLog(@"RowIndex=%i and Comapnylist = %lu",rowIndex,(unsigned long)[self.companyList count]);
-        
-            for(int i = (rowIndex+1); i<= ([self.companyList count]+1); i++)
-            {
-                NSString *updateRowIndex = [NSString stringWithFormat:@"UPDATE companies SET company_rowindex = %d WHERE company_rowindex = %i", (i-1), i];
-                    
-                const char *sqlRowIndexUpdate = [updateRowIndex UTF8String];
-                char *error;
-            
-                if (sqlite3_exec(database, sqlRowIndexUpdate, NULL, NULL, &error)==SQLITE_OK)
-                {
-                    NSLog(@"Update done .. ");
-                }
-                else
-                {
-                    NSLog(@"Error in update.. ");
-                }
-
-            }
-       
-    
-        sqlite3_close(database);
-    
-        if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-        {
-        
-            NSString *deleteProductsForCompany = [NSString stringWithFormat:@"DELETE FROM products WHERE company_id = %i",index];
-            
-            const char *sqlCompanyProductsDelete = [deleteProductsForCompany  UTF8String];
-            char *error;
-            if (sqlite3_exec(database, sqlCompanyProductsDelete, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-          
-        }
-        sqlite3_close(database);
-    }
-}
+      }
 
 -(Company*)getCompany :(NSUInteger)companyIndex
 {
+    
     return [self.companyList  objectAtIndex:companyIndex];
+    
 }
 
 
@@ -291,85 +385,26 @@ static DataAccess *sharedDataAccess = nil;
 {
     
     Product* productToDelete = [company.listOfCompanyProducts objectAtIndex:IndexToDelete];
+    CompanyCd* companyCd = [self.companyCoreDataList objectAtIndex:company.companyRowIndex-1];
     
     for (int i = 0;i<[company.listOfCompanyProducts count];i++)
     {
         Product* ProductTempIndex = [company.listOfCompanyProducts objectAtIndex:i];
-        
+        ProductCd *productCdTempIndex = [[[companyCd products] allObjects] objectAtIndex:i];
         if(ProductTempIndex.productRowIndex > productToDelete.productRowIndex)
         {
             ProductTempIndex.productRowIndex--;
+            [productCdTempIndex setValue:[NSNumber numberWithInt:ProductTempIndex.productRowIndex] forKey:@"ProductCdRowIndex"];
         }
     }
-    int index = productToDelete.productId;
-    int rowIndex = productToDelete.productRowIndex;
     
     [company.listOfCompanyProducts removeObjectAtIndex: IndexToDelete];
-
     
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-    NSLog(@"%@",dbPath);
-        
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-            
-        NSString *deleteProduct = [NSString stringWithFormat:@"DELETE FROM products WHERE product_id = %i",index];
-        NSLog(@"%@",deleteProduct);
-            
-        const char *sqlRowDelete = [deleteProduct  UTF8String];
-        char *error;
-        if (sqlite3_exec(database, sqlRowDelete, NULL, NULL, &error)==SQLITE_OK)
-        {
-            NSLog(@"Update done .. ");
-        }
-        else
-        {
-            NSLog(@"Error in update.. ");
-        }
-            
-        NSLog(@"RowIndex=%i and Comapnylist = %lu",rowIndex,(unsigned long)[self.companyList count]);
-            
-        for(int i = (rowIndex+1); i<= ([company.listOfCompanyProducts count]+1); i++)
-        {
-            NSString *updateRowIndex = [NSString stringWithFormat:@"UPDATE products SET product_rowindex = %d WHERE product_rowindex = %i", (i-1), i];
-                
-            const char *sqlRowIndexUpdate = [updateRowIndex UTF8String];
-            char *error;
-                
-            if (sqlite3_exec(database, sqlRowIndexUpdate, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-                
-        }
-       
-        sqlite3_close(database);
-        
-        if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-        {
-            
-            NSString *deleteProductsForCompany = [NSString stringWithFormat:@"DELETE FROM products WHERE company_id = %i",index];
-            
-            const char *sqlCompanyProductsDelete = [deleteProductsForCompany  UTF8String];
-            char *error;
-            
-            if (sqlite3_exec(database, sqlCompanyProductsDelete, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-        }
-        sqlite3_close(database);
-    }
+    ProductCd *objectToDelete = [[[companyCd products] allObjects] objectAtIndex:IndexToDelete];
+    [context deleteObject:objectToDelete];
+    
+    [self saveCoreData];
+    
 }
 
 
@@ -382,51 +417,14 @@ static DataAccess *sharedDataAccess = nil;
     
     Company *company = [[Company alloc] initWithName:companyName andcompanyLogo:companyLogo andcompanycode:companyCode andcompanyrowindex:rowIndex];
     
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-    NSLog(@"%@",dbPath);
+    CompanyCd *commpanyCd = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
     
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        
-        NSString *insertNewCompany = [NSString stringWithFormat:@"INSERT INTO companies (company_name, company_logo, company_code,company_rowindex)VALUES ('%@','%@','%@','%i')",companyName,companyLogo,companyCode,rowIndex];
-            
-        const char *sqlRowInd = [insertNewCompany  UTF8String];
-        char *error;
-        
-        if (sqlite3_exec(database, sqlRowInd, NULL, NULL, &error)==SQLITE_OK)
-        {
-            NSLog(@"Update done .. ");
-        }
-        else
-        {
-            NSLog(@"Error in update.. ");
-        }
-    }
-    sqlite3_close(database);
+    [commpanyCd setCompanyCdName:companyName];
+    [commpanyCd setCompanyCdLogo:companyLogo];
+    [commpanyCd setCompanyCdCode:companyCode];
+    [commpanyCd setCompanyCdRowIndex: [NSNumber numberWithInt:rowIndex]];
     
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        
-        NSString *getCompanyId = [NSString stringWithFormat:@"SELECT MAX(company_id) from companies"];
-        sqlite3_stmt *statement;
-       
-        const char *sqlGetId = [getCompanyId  UTF8String];
-        NSLog(@"%@", company.companyName);
-        
-        if (sqlite3_prepare_v2(database, sqlGetId, -1, &statement, NULL) == SQLITE_OK)
-        {
-            while (sqlite3_step(statement) == SQLITE_ROW)
-            {
-                NSString *companyID =   [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 0)];
-                company.companyId = [companyID intValue];
-            }
-        }
-        
-    }
-    
-    sqlite3_close(database);
+    [self saveCoreData];
     
     if(company.compnayCode != nil || ![company.compnayCode  isEqual: @"-"])
     {
@@ -454,6 +452,7 @@ static DataAccess *sharedDataAccess = nil;
     company.listOfCompanyProducts = [[NSMutableArray alloc]init];
 
     [self.companyList addObject:company];
+    [self.companyCoreDataList addObject:commpanyCd];
     [company release];
 }
 
@@ -462,60 +461,23 @@ static DataAccess *sharedDataAccess = nil;
     
     Product *product = [[Product alloc]initWithProductName:productName andproductImage:@"product.png" andProductUrl:productUrl];
     
-    int companyId = company.companyId;
-    
     int rowIndex = (int) [company.listOfCompanyProducts count]+1;
-
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-    NSLog(@"%@",dbPath);
     
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        NSString *insertNewProduct = [NSString stringWithFormat:@"INSERT INTO products (product_name, product_image, product_url,company_id,product_rowindex)VALUES ('%@','%@','%@','%i','%i')",product.productName,product.productImage,product.productUrl,companyId,rowIndex];
-
-        const char *sqlInsertProduct = [insertNewProduct  UTF8String];
-        char *error;
-        
-        if (sqlite3_exec(database, sqlInsertProduct, NULL, NULL, &error)==SQLITE_OK)
-        {
-            NSLog(@"Update done .. ");
-        }
-        else
-        {
-            NSLog(@"Error in update.. ");
-        }
-    }
-    sqlite3_close(database);
+    CompanyCd* companyCd = [self.companyCoreDataList objectAtIndex:company.companyRowIndex-1];
     
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        
-        NSString *getproductId = [NSString stringWithFormat:@"SELECT MAX(product_id) from products"];
-        sqlite3_stmt *statement;
-        
-        const char *sqlGetId = [getproductId  UTF8String];
-  
-        if (sqlite3_prepare_v2(database, sqlGetId, -1, &statement, NULL) == SQLITE_OK)
-        {
-            
-            while (sqlite3_step(statement) == SQLITE_ROW)
-            {
-                NSString *productID =   [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 0)];
-                product.productId = [productID intValue];
-            }
-        }
-        
-    }
+    ProductCd *productCd = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
+    [productCd setProductCdName:productName];
+    [productCd setProductCdLogo:@"product.png"];
+    [productCd setProductCdUrl:productUrl];
+    [productCd setProductCdRowIndex:[NSNumber numberWithInt:rowIndex]];
     
-    sqlite3_close(database);
+    [companyCd addProductsObject:productCd];
+    
+    [self saveCoreData];
 
     [company.listOfCompanyProducts addObject:product];
     [product release];
-    
-//    [productName retain];
-//    [productUrl retain];
+
 }
 
 
@@ -523,71 +485,47 @@ static DataAccess *sharedDataAccess = nil;
 {
     Company *updateCompany = company;
     
-    // avoid repetative codes - put it into a method to return the path
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
- 
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        
-            NSString *updateCompanyDetails = [NSString stringWithFormat:@"UPDATE companies SET company_name = '%@', company_logo = '%@', company_code = '%@' WHERE company_id = %i", updateCompany.companyName, updateCompany.companyLogo, updateCompany.compnayCode, updateCompany.companyId];
-            
-            const char *sqlUpdateCompanyDetail = [updateCompanyDetails  UTF8String];
-            char *error;
-        
-            if (sqlite3_exec(database, sqlUpdateCompanyDetail, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-    }
-    sqlite3_close(database);
+    NSNumber *rowIndex = [NSNumber numberWithInt:updateCompany.companyRowIndex];
+    CompanyCd* commpanyCd = [self.companyCoreDataList objectAtIndex:index];
     
-    [self.companyList removeObjectAtIndex: index];
+    [commpanyCd setValue:updateCompany.companyName forKey:@"companyCdName"];
+    [commpanyCd setValue:updateCompany.companyLogo forKey:@"companyCdLogo"];
+    [commpanyCd setValue:updateCompany.compnayCode forKey:@"companyCdCode"];
+    [commpanyCd setValue:rowIndex forKey:@"companyCdRowIndex"];
+
+    [self saveCoreData];
     
-    [self.companyList insertObject:updateCompany atIndex:index];
+    [self.companyList replaceObjectAtIndex:index withObject:updateCompany];
+    [self.companyCoreDataList replaceObjectAtIndex:index withObject:commpanyCd];
 
     [updateCompany retain];
 
     return TRUE;
 }
 
--(BOOL)updateProductDetails : (Product*)productToUpdate
+-(BOOL)updateProductDetails : (Product*)productToUpdate :(Company*)company
 {
+    int rowIndex = (int) productToUpdate.productRowIndex;
     
-    Product *updateProduct = productToUpdate;
+    CompanyCd* companyCd = [self.companyCoreDataList objectAtIndex:company.companyRowIndex-1];
     
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
+    ProductCd* productCdToUpdate = [[[companyCd products] allObjects] objectAtIndex:rowIndex-1];
     
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        
-        NSString *updateproductDetails = [NSString stringWithFormat:@"UPDATE products SET product_name = '%@', product_image = '%@', product_url = '%@'  WHERE product_id = %i", updateProduct.productName, updateProduct.productImage, updateProduct.productUrl, updateProduct.productId];
-        
-        const char *sqlUpdateproductDetail = [updateproductDetails  UTF8String];
-        char *error;
-        if (sqlite3_exec(database, sqlUpdateproductDetail, NULL, NULL, &error)==SQLITE_OK)
-        {
-            NSLog(@"Update done .. ");
-        }
-        else
-        {
-            NSLog(@"Error in update.. ");
-        }
-    }
-    sqlite3_close(database);
+    [productCdToUpdate setProductCdName:productToUpdate.productName];
+    [productCdToUpdate setProductCdLogo:productToUpdate.productImage];
+    [productCdToUpdate setProductCdUrl:productToUpdate.productUrl];
+    [productCdToUpdate setProductCdRowIndex:[NSNumber numberWithInt:rowIndex]];
     
-    // lines below are not required as parameter product is reference to the same product in the list
-  //  [updateCompany.listOfCompanyProducts removeObjectAtIndex: productToUpdate.productRowIndex-1];
-   // [company.listOfCompanyProducts insertObject:productToUpdate atIndex:productToUpdate.productRowIndex-1];
+    [companyCd addProductsObject:productCdToUpdate];
     
-    //[productToUpdate retain];
+    [self saveCoreData];
+    
+    int productIndex = rowIndex-1;
+    
+    
+    [company.listOfCompanyProducts replaceObjectAtIndex:productIndex withObject:productToUpdate];
+    
+    [productToUpdate retain];
 
     return TRUE;
 }
@@ -597,119 +535,69 @@ static DataAccess *sharedDataAccess = nil;
 -(void)moveCompanyRow :(NSUInteger)fromIndex : (NSUInteger)toIndex
 {
     Company* companyToMove = [self.companyList objectAtIndex:fromIndex];
-    
-  //  Company* company = [self.companyList objectAtIndex:fromIndex];
-    
-    for (int i = 0;i<[self.companyList count];i++)
-    {
-        Company* companyTempIndex = [self.companyList objectAtIndex:i];
-        
-        if(companyTempIndex.companyRowIndex > companyToMove.companyRowIndex)
-        {
-            companyTempIndex.companyRowIndex--;
-            
-        }
-    }
-    
-   // int index = company.companyId;
-   // int rowIndex = company.companyRowIndex;
+    CompanyCd* companyCdToMove = [self.companyCoreDataList objectAtIndex:fromIndex];
     
     [self.companyList removeObjectAtIndex: fromIndex];
+    [self.companyCoreDataList removeObjectAtIndex: fromIndex];
+    
     [self.companyList insertObject:companyToMove atIndex:toIndex];
+    [self.companyCoreDataList insertObject:companyCdToMove atIndex:toIndex];
     
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-    NSLog(@"%@",dbPath);
-    
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        for(int j = 0;j<[self.companyList count];j++)
-        {
-            Company *companyToUpdate = [self.companyList objectAtIndex:j];
-            
-            
-            int index = companyToUpdate.companyId;
-            
-            NSString *queryUpdateRowIndex = [NSString stringWithFormat:@"UPDATE companies SET company_rowindex = %d WHERE company_id = %i", j+1, index];
-            
-            const char *sqlRowInd = [queryUpdateRowIndex  UTF8String];
-            char *error;
-            if (sqlite3_exec(database, sqlRowInd, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-        }
-        sqlite3_close(database);
+    for (int i =0 ; i<[self.companyList count]; i++) {
+        NSNumber *rowIndex = [NSNumber numberWithInt:i+1];
+        
+        Company* temp = [self.companyList objectAtIndex:i];
+        CompanyCd* companyTempToMove = [self.companyCoreDataList objectAtIndex:i];
+        [companyTempToMove setValue:rowIndex forKey:@"companyCdRowIndex"];
+        temp.companyRowIndex = i+1;
+        [self saveCoreData];
+        
     }
+    
 }
 
 
 -(void)moveProductRow : (NSUInteger)fromIndex : (NSUInteger)toIndex :(Company*)company
 {
-    Product* productToDelete = [company.listOfCompanyProducts objectAtIndex:fromIndex];
+    Product* productToMove = [company.listOfCompanyProducts objectAtIndex:fromIndex];
+    [productToMove retain];
+    [company.listOfCompanyProducts removeObjectAtIndex: fromIndex];
+    [company.listOfCompanyProducts insertObject:productToMove atIndex:toIndex];
+    
+    
+    CompanyCd* companyCd = [self.companyCoreDataList objectAtIndex:company.companyRowIndex-1];
     
     for (int i = 0;i<[company.listOfCompanyProducts count];i++)
     {
-        Product* ProductTempIndex = [company.listOfCompanyProducts objectAtIndex:i];
+        Product* temp = [company.listOfCompanyProducts objectAtIndex:i];
+        temp.productRowIndex = i+1;
+        ProductCd* productCdToUpdate = [[[companyCd products] allObjects] objectAtIndex:i];
         
-        if(ProductTempIndex.productRowIndex > productToDelete.productRowIndex)
-        {
-            ProductTempIndex.productRowIndex--;
-        }
+        [productCdToUpdate setProductCdName:temp.productName];
+        [productCdToUpdate setProductCdLogo:temp.productImage];
+        [productCdToUpdate setProductCdUrl:temp.productUrl];
+        [productCdToUpdate setProductCdRowIndex:[NSNumber numberWithInt:i+1]];
+        
+        [companyCd addProductsObject:productCdToUpdate];
+        
+        [self saveCoreData];
+        
     }
-    int index = productToDelete.productId;
-   // int rowIndex = productToDelete.productRowIndex;
     
-    [company.listOfCompanyProducts removeObjectAtIndex: fromIndex];
-    
-    productToDelete.productRowIndex = index+1.0;
-    [company.listOfCompanyProducts insertObject:productToDelete atIndex:toIndex];
-    
-    
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docsPath = [paths objectAtIndex:0];
-    NSString *dbPath = [docsPath stringByAppendingPathComponent:@"myappdata.sqlite"];
-    NSLog(@"%@",dbPath);
-    
-    if (sqlite3_open([dbPath UTF8String], &database) == SQLITE_OK)
-    {
-        for(int j = 0;j<[company.listOfCompanyProducts count];j++)
-        {
-            Product *productToUpdate = [company.listOfCompanyProducts objectAtIndex:j];
-            
-            int index = productToUpdate.productId;
-            
-            NSString *queryUpdateRowIndex = [NSString stringWithFormat:@"UPDATE products SET product_rowindex = %d WHERE product_id = %i", j+1, index];
-            
-            const char *sqlRowInd = [queryUpdateRowIndex  UTF8String];
-            char *error;
-            if (sqlite3_exec(database, sqlRowInd, NULL, NULL, &error)==SQLITE_OK)
-            {
-                NSLog(@"Update done .. ");
-            }
-            else
-            {
-                NSLog(@"Error in update.. ");
-            }
-        }
-        sqlite3_close(database);
+}
+-(void)saveCoreData
+{
+    NSError *err = nil;
+    BOOL successful = [context save:&err];
+    if(!successful){
+        NSLog(@"Error saving: %@", [err localizedDescription]);
     }
-
-
-
 
 
 }
 
-
-
 - (void)dealloc {
-    sqlite3_close(database);
+
     [super dealloc];
 }
 

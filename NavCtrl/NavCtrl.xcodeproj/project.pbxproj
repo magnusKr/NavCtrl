@@ -34,8 +34,13 @@
 		9F0DD3211BD80AD300CAA368 /* EditCompanyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD31F1BD80AD300CAA368 /* EditCompanyViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		9F0DD32B1BD821F000CAA368 /* EditProductViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DD3291BD821F000CAA368 /* EditProductViewController.m */; settings = {ASSET_TAGS = (); }; };
 		9F0DD32C1BD821F000CAA368 /* EditProductViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F0DD32A1BD821F000CAA368 /* EditProductViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		9F350F711BEBBC9600C25FC7 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9F350F6F1BEBBC9600C25FC7 /* Model.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
+		9F350F7F1BEBE17300C25FC7 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F350F7E1BEBE17300C25FC7 /* CoreData.framework */; };
+		9F350F9A1BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F350F931BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.m */; settings = {ASSET_TAGS = (); }; };
+		9F350F9B1BF0FD9900C25FC7 /* CompanyCd.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F350F951BF0FD9900C25FC7 /* CompanyCd.m */; settings = {ASSET_TAGS = (); }; };
+		9F350F9C1BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F350F971BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.m */; settings = {ASSET_TAGS = (); }; };
+		9F350F9D1BF0FD9900C25FC7 /* ProductCd.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F350F991BF0FD9900C25FC7 /* ProductCd.m */; settings = {ASSET_TAGS = (); }; };
 		9FE5466F1BE03322004B7C77 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE5466E1BE03322004B7C77 /* libsqlite3.0.tbd */; };
-		9FE546711BE3B5D0004B7C77 /* myappdata.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 9FE546701BE3B5D0004B7C77 /* myappdata.sqlite */; settings = {ASSET_TAGS = (); }; };
 		9FF6B3B41BCED9790015F471 /* apple.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF6B3B31BCED9790015F471 /* apple.png */; settings = {ASSET_TAGS = (); }; };
 		9FF6B3B61BCED9890015F471 /* htc.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF6B3B51BCED9890015F471 /* htc.png */; settings = {ASSET_TAGS = (); }; };
 		9FF6B3B81BCED9BC0015F471 /* motorola.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF6B3B71BCED9BC0015F471 /* motorola.png */; settings = {ASSET_TAGS = (); }; };
@@ -108,8 +113,17 @@
 		9F0DD3281BD821F000CAA368 /* EditProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProductViewController.h; sourceTree = "<group>"; };
 		9F0DD3291BD821F000CAA368 /* EditProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditProductViewController.m; sourceTree = "<group>"; };
 		9F0DD32A1BD821F000CAA368 /* EditProductViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditProductViewController.xib; sourceTree = "<group>"; };
+		9F350F701BEBBC9600C25FC7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		9F350F7E1BEBE17300C25FC7 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		9F350F921BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CompanyCd+CoreDataProperties.h"; sourceTree = "<group>"; };
+		9F350F931BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CompanyCd+CoreDataProperties.m"; sourceTree = "<group>"; };
+		9F350F941BF0FD9900C25FC7 /* CompanyCd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompanyCd.h; sourceTree = "<group>"; };
+		9F350F951BF0FD9900C25FC7 /* CompanyCd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompanyCd.m; sourceTree = "<group>"; };
+		9F350F961BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ProductCd+CoreDataProperties.h"; sourceTree = "<group>"; };
+		9F350F971BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ProductCd+CoreDataProperties.m"; sourceTree = "<group>"; };
+		9F350F981BF0FD9900C25FC7 /* ProductCd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductCd.h; sourceTree = "<group>"; };
+		9F350F991BF0FD9900C25FC7 /* ProductCd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductCd.m; sourceTree = "<group>"; };
 		9FE5466E1BE03322004B7C77 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
-		9FE546701BE3B5D0004B7C77 /* myappdata.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = myappdata.sqlite; sourceTree = "<group>"; };
 		9FF6B3B31BCED9790015F471 /* apple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple.png; path = "../../../../untitled folder/apple.png"; sourceTree = "<group>"; };
 		9FF6B3B51BCED9890015F471 /* htc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = htc.png; path = "../../../../untitled folder/htc.png"; sourceTree = "<group>"; };
 		9FF6B3B71BCED9BC0015F471 /* motorola.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = motorola.png; path = "../../../../untitled folder/motorola.png"; sourceTree = "<group>"; };
@@ -141,6 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F350F7F1BEBE17300C25FC7 /* CoreData.framework in Frameworks */,
 				9FE5466F1BE03322004B7C77 /* libsqlite3.0.tbd in Frameworks */,
 				9FF6B3F11BD0275E0015F471 /* WebKit.framework in Frameworks */,
 				48A656B718163BF200746D36 /* CoreGraphics.framework in Frameworks */,
@@ -186,6 +201,7 @@
 		48A656B318163BF200746D36 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F350F7E1BEBE17300C25FC7 /* CoreData.framework */,
 				9FE5466E1BE03322004B7C77 /* libsqlite3.0.tbd */,
 				9FF6B3F01BD0275E0015F471 /* WebKit.framework */,
 				48A656B418163BF200746D36 /* Foundation.framework */,
@@ -215,7 +231,6 @@
 				9FF6B3BF1BCEEB2F0015F471 /* motorola3.jpeg */,
 				9FF6B3C11BCEEB400015F471 /* motorola2.png */,
 				9FF6B3C21BCEEB400015F471 /* motorola1.png */,
-				9FE546701BE3B5D0004B7C77 /* myappdata.sqlite */,
 				9FF6B3C31BCEEB400015F471 /* htc3.png */,
 				9FF6B3C41BCEEB400015F471 /* htc2.png */,
 				9FF6B3C51BCEEB400015F471 /* htc1.png */,
@@ -279,6 +294,7 @@
 				9F0DD3281BD821F000CAA368 /* EditProductViewController.h */,
 				9F0DD3291BD821F000CAA368 /* EditProductViewController.m */,
 				9F0DD32A1BD821F000CAA368 /* EditProductViewController.xib */,
+				9F350F6F1BEBBC9600C25FC7 /* Model.xcdatamodeld */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -286,6 +302,14 @@
 		9FF6B3F81BD14EAE0015F471 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9F350F921BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.h */,
+				9F350F931BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.m */,
+				9F350F941BF0FD9900C25FC7 /* CompanyCd.h */,
+				9F350F951BF0FD9900C25FC7 /* CompanyCd.m */,
+				9F350F961BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.h */,
+				9F350F971BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.m */,
+				9F350F981BF0FD9900C25FC7 /* ProductCd.h */,
+				9F350F991BF0FD9900C25FC7 /* ProductCd.m */,
 				9FF6B3F91BD14EEE0015F471 /* Company.h */,
 				9FF6B3FA1BD14EEE0015F471 /* Company.m */,
 				9FF6B3FC1BD14F000015F471 /* Product.h */,
@@ -393,7 +417,6 @@
 				9FF6B3CF1BCEEB400015F471 /* htc1.png in Resources */,
 				9FF6B3BE1BCEE38F0015F471 /* galaxys4.png in Resources */,
 				9FF6B3C01BCEEB2F0015F471 /* motorola3.jpeg in Resources */,
-				9FE546711BE3B5D0004B7C77 /* myappdata.sqlite in Resources */,
 				9FF6B3EE1BCF0FE20015F471 /* ProductViewController.xib in Resources */,
 				9F0DD3131BD6926000CAA368 /* AddCompanyViewController.xib in Resources */,
 				9FF6B3D01BCEEB400015F471 /* galaxys6.png in Resources */,
@@ -418,17 +441,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F350F9B1BF0FD9900C25FC7 /* CompanyCd.m in Sources */,
 				9F0DD3191BD6B89300CAA368 /* AddProductViewController.m in Sources */,
 				9F0DD3121BD6926000CAA368 /* AddCompanyViewController.m in Sources */,
 				9FF6B3FE1BD14F000015F471 /* Product.m in Sources */,
 				9FF6B3ED1BCF0FE20015F471 /* ProductViewController.m in Sources */,
+				9F350F9D1BF0FD9900C25FC7 /* ProductCd.m in Sources */,
 				9FF6B3FB1BD14EEE0015F471 /* Company.m in Sources */,
 				9F0DD30E1BD54B9900CAA368 /* DataAccess.m in Sources */,
 				48A656E618163C1B00746D36 /* CompanyViewController.m in Sources */,
 				48A656C518163BF200746D36 /* qcdDemoAppDelegate.m in Sources */,
 				9F0DD32B1BD821F000CAA368 /* EditProductViewController.m in Sources */,
 				48A656C118163BF200746D36 /* main.m in Sources */,
+				9F350F9A1BF0FD9900C25FC7 /* CompanyCd+CoreDataProperties.m in Sources */,
+				9F350F9C1BF0FD9900C25FC7 /* ProductCd+CoreDataProperties.m in Sources */,
 				48A656EB18163F8700746D36 /* CompanyProductsViewController.m in Sources */,
+				9F350F711BEBBC9600C25FC7 /* Model.xcdatamodeld in Sources */,
 				9F0DD3201BD80AD300CAA368 /* EditCompanyViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -650,6 +678,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		9F350F6F1BEBBC9600C25FC7 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				9F350F701BEBBC9600C25FC7 /* Model.xcdatamodel */,
+			);
+			currentVersion = 9F350F701BEBBC9600C25FC7 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 48A656A918163BF200746D36 /* Project object */;
 }

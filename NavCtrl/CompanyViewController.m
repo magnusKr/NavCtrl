@@ -76,6 +76,7 @@
 {
 
     return  [[DataAccess sharedData] getNumberOfCompanies];
+    
 
 }
 
@@ -104,6 +105,8 @@
     cell.textLabel.text = company.companyName;
     cell.imageView.image = [UIImage imageNamed:company.companyLogo];
     cell.detailTextLabel.text = company.compnayStockPrice;
+
+
     
     return cell;
    

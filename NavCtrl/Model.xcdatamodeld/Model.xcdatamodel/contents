@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8195" systemVersion="14F27" minimumToolsVersion="Xcode 7.0">
+    <entity name="CompanyCd" representedClassName="CompanyCd" syncable="YES">
+        <attribute name="companyCdCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="companyCdLogo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="companyCdName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="companyCdRowIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="products" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProductCd" inverseName="relationship" inverseEntity="ProductCd" syncable="YES"/>
+    </entity>
+    <entity name="ProductCd" representedClassName="ProductCd" syncable="YES">
+        <attribute name="productCdLogo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="productCdName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="productCdRowIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="productCdUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="relationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CompanyCd" inverseName="products" inverseEntity="CompanyCd" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CompanyCd" positionX="-45" positionY="0" width="128" height="118"/>
+        <element name="ProductCd" positionX="171" positionY="8" width="128" height="118"/>
+    </elements>
+</model>

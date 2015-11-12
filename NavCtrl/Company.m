@@ -39,6 +39,9 @@
         _compnayStockPrice = nil;
         _compnayCode = companyCode;
         _companyRowIndex = companyRowIndex;
+        [_companyLogo retain];
+        [_companyName retain];
+        [_compnayCode retain];
     }
     return self;
     

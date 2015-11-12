@@ -44,7 +44,7 @@
     product.productUrl = self.productUrl.text;
     product.productImage = self.productImageUrl.text;
     
-    if([[DataAccess sharedData] updateProductDetails:product])
+    if([[DataAccess sharedData] updateProductDetails:product :self.company])
 
         [self.navigationController popViewControllerAnimated:YES];
 }
