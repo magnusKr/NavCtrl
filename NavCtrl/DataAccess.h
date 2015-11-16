@@ -12,7 +12,7 @@
 #import "CompanyCd.h"
 #import "ProductCd.h"
 #import <CoreData/CoreData.h>
-
+#import <AFNetworking/AFHTTPRequestOperation.h>
 
 @protocol DataAccessDelegate <NSObject>
 

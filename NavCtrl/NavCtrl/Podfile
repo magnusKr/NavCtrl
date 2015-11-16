@@ -1,0 +1,4 @@
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '7.0'
+xcodeproj '/Users/magnus.kraepelien/Documents/Repository/TurnToTechRepo/NavCtrl/NavCtrl.xcodeproj'
+pod 'AFNetworking', '~> 2.5'

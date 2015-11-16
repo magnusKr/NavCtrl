@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CompanyViewController.h"
-
+#import "CompanyCViewController.h"
 
 @interface EditProductViewController : UIViewController
 @property NSUInteger productIndex;

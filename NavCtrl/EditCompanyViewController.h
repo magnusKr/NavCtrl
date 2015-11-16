@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CompanyViewController.h"
-
+#import "CompanyCViewController.h"
 @interface EditCompanyViewController : UIViewController
 @property NSUInteger companyIndex;
 @property (retain, nonatomic) IBOutlet UITextField *companyName;

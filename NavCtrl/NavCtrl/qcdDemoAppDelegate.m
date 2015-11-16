@@ -7,17 +7,17 @@
 //
 
 #import "qcdDemoAppDelegate.h"
-#import "CompanyViewController.h"
-
+#import "CompanyCViewController.h"
 @implementation qcdDemoAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
     // Override point for customization after application launch.
+        
     UIViewController *rootController =
-    [[CompanyViewController alloc]
-     initWithNibName:@"CompanyViewController" bundle:nil];
+    [[CompanyCViewController alloc]
+     initWithNibName:@"CompanyCViewController" bundle:nil];
     
     self.navigationController = [[UINavigationController alloc]
                             initWithRootViewController:rootController];

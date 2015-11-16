@@ -43,35 +43,61 @@ static DataAccess *sharedDataAccess = nil;
     self.quoteUrl = [self.quoteUrl stringByAppendingString:@"&f=a"];
     
     NSURL * url = [NSURL URLWithString:self.quoteUrl];
-    NSURLSessionDataTask * dataTask = [self.defaultSession dataTaskWithURL:url
-                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                            
-    if(error == nil)
-    {
-        NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+    
+    AFHTTPRequestOperation* reuquestQuotes = [[AFHTTPRequestOperation alloc]initWithRequest:[NSURLRequest requestWithURL:url]];
+    //NSURLSessionDataTask * dataTask = [self.defaultSession dataTaskWithURL:url
+//                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [reuquestQuotes setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject){
+        
+        NSString * text = [[NSString alloc] initWithData: responseObject encoding: NSUTF8StringEncoding];
         self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
         [text release];
         int i = 0;
         int j = 0;
-                                                              
         while (j < [self.companyList count]){
             Company* company = [self.companyList objectAtIndex:j];
-                                                                    
+        
             if(company.compnayCode != nil)
             {
                 company.compnayStockPrice = [self.companyQuoteArray objectAtIndex:i];
                 i++;
             }
-            j++;
-        
+                j++;
+                
         }
-                                                                
         [delegate reload];
-    
-    }
-                                                            
-    }];
-    [dataTask resume];
+        
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Couldn't connect to stock market!");
+}];
+    [reuquestQuotes start];
+
+//    if(error == nil)
+//    {
+//        NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+//        self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
+//        [text release];
+//        int i = 0;
+//        int j = 0;
+//                                                              
+//        while (j < [self.companyList count]){
+//            Company* company = [self.companyList objectAtIndex:j];
+//                                                                    
+//            if(company.compnayCode != nil)
+//            {
+//                company.compnayStockPrice = [self.companyQuoteArray objectAtIndex:i];
+//                i++;
+//            }
+//            j++;
+//        
+//        }
+//                                                                
+//        [delegate reload];
+//    
+//    }
+//                                                            
+//    }];
+//    [dataTask resume];
 
 }
 
@@ -433,20 +459,23 @@ static DataAccess *sharedDataAccess = nil;
         urlString = [urlString stringByAppendingString:@"&f=a"];
     
     NSURL * url = [NSURL URLWithString:urlString];
-    
-    NSURLSessionDataTask * dataTask = [self.defaultSession dataTaskWithURL:url
-                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+     AFHTTPRequestOperation* reuquestQuotes = [[AFHTTPRequestOperation alloc]initWithRequest:[NSURLRequest requestWithURL:url]];
+        
+        [reuquestQuotes setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject){
                                                              
-                                                             if(error == nil)
-                                                             {
-                                                                 NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+
+        NSString * text = [[NSString alloc] initWithData: responseObject encoding: NSUTF8StringEncoding];
                                                                  company.compnayStockPrice = text;
                                                                  [delegate reload];
                                                                  
-                                                             }
-                                                             
-                                                         }];
-    [dataTask resume];
+        }
+        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Couldn't connect to stock market!");
+        }
+         
+         ];
+    [reuquestQuotes start];
     
     }
     company.listOfCompanyProducts = [[NSMutableArray alloc]init];
