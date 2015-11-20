@@ -18,8 +18,6 @@
         _productName = productName;
         _productImage = productImage;
         _productUrl = productUrl;
-
-        
     }
     return self;
     
@@ -35,7 +33,6 @@
         _productUrl = productURL;
         _productRowIndex = productRowId;
         _productId = productId;
-        
         [_productName retain];
         [_productImage retain];
         [_productUrl retain];

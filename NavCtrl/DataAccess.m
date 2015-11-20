@@ -24,7 +24,8 @@ static DataAccess *sharedDataAccess = nil;
 }
 
 
-- (id)retain {
+- (id)retain
+{
     return self;
 }
 
@@ -33,72 +34,9 @@ static DataAccess *sharedDataAccess = nil;
     // never release
 }
 
-- (id)autorelease {
-    return self;
-}
-
--(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate
+- (id)autorelease
 {
-
-    self.quoteUrl = [self.quoteUrl stringByAppendingString:@"&f=a"];
-    
-    NSURL * url = [NSURL URLWithString:self.quoteUrl];
-    
-    AFHTTPRequestOperation* reuquestQuotes = [[AFHTTPRequestOperation alloc]initWithRequest:[NSURLRequest requestWithURL:url]];
-    //NSURLSessionDataTask * dataTask = [self.defaultSession dataTaskWithURL:url
-//                                                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-    [reuquestQuotes setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject){
-        
-        NSString * text = [[NSString alloc] initWithData: responseObject encoding: NSUTF8StringEncoding];
-        self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
-        [text release];
-        int i = 0;
-        int j = 0;
-        while (j < [self.companyList count]){
-            Company* company = [self.companyList objectAtIndex:j];
-        
-            if(company.compnayCode != nil)
-            {
-                company.compnayStockPrice = [self.companyQuoteArray objectAtIndex:i];
-                i++;
-            }
-                j++;
-                
-        }
-        [delegate reload];
-        
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Couldn't connect to stock market!");
-}];
-    [reuquestQuotes start];
-
-//    if(error == nil)
-//    {
-//        NSString * text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-//        self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
-//        [text release];
-//        int i = 0;
-//        int j = 0;
-//                                                              
-//        while (j < [self.companyList count]){
-//            Company* company = [self.companyList objectAtIndex:j];
-//                                                                    
-//            if(company.compnayCode != nil)
-//            {
-//                company.compnayStockPrice = [self.companyQuoteArray objectAtIndex:i];
-//                i++;
-//            }
-//            j++;
-//        
-//        }
-//                                                                
-//        [delegate reload];
-//    
-//    }
-//                                                            
-//    }];
-//    [dataTask resume];
-
+    return self;
 }
 
 
@@ -126,7 +64,7 @@ static DataAccess *sharedDataAccess = nil;
     model = [NSManagedObjectModel mergedModelFromBundles:nil];
     
     //psc serve to mediate between the persistent store or stores and the managed object context or contexts
-    NSPersistentStoreCoordinator *psc =
+    NSPersistentStoreCoordinator *persistanStoreCoordinator =
     [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];
     
     //Get path to storage
@@ -139,12 +77,12 @@ static DataAccess *sharedDataAccess = nil;
     NSError *error = nil;
     
      //To load a model, you provide an URL to the constructor(Persisten store coordinator)
-    if(![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]){
+    if(![persistanStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]){
         [NSException raise:@"Open failed" format:@"Reason: %@", [error localizedDescription]];
     }
 
     context = [[NSManagedObjectContext alloc] init];
-    [context setPersistentStoreCoordinator:psc];
+    [context setPersistentStoreCoordinator:persistanStoreCoordinator];
     [context setUndoManager:nil];
    
     
@@ -180,7 +118,6 @@ static DataAccess *sharedDataAccess = nil;
             [commapnyCDOne addProductsObject:productTwo];
 
      
-
             ProductCd *productThree = [NSEntityDescription insertNewObjectForEntityForName:@"ProductCd" inManagedObjectContext:context];
             [productThree setProductCdName:@"iPhone"];
             [productThree setProductCdLogo:@"iphone.png"];
@@ -190,7 +127,6 @@ static DataAccess *sharedDataAccess = nil;
             [commapnyCDOne addProductsObject:productThree];
 
 
-        
             CompanyCd *commapnyCDTwo = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
         
             [commapnyCDTwo setCompanyCdName:@"Samsung mobile devices"];
@@ -226,14 +162,12 @@ static DataAccess *sharedDataAccess = nil;
 
 
         
-        
             CompanyCd *commapnyCDThree = [NSEntityDescription insertNewObjectForEntityForName:@"CompanyCd" inManagedObjectContext:context];
         
             [commapnyCDThree setCompanyCdName:@"Motorola mobile devices"];
             [commapnyCDThree setCompanyCdLogo:@"motorola.png"];
             [commapnyCDThree setCompanyCdCode:@"MSFT"];
             [commapnyCDThree setCompanyCdRowIndex: [NSNumber numberWithInt:3]];
-        
         
         
         
@@ -317,6 +251,9 @@ static DataAccess *sharedDataAccess = nil;
     
     NSArray *result = [context executeFetchRequest:request error:&error];
     
+    [sortDescriptors release];
+    [persistanStoreCoordinator release];
+    
     if(!result){
         [NSException raise:@"Fetch Failed" format:@"Reason: %@", [error localizedDescription]];
     }
@@ -364,6 +301,47 @@ static DataAccess *sharedDataAccess = nil;
     return [documentsDirectory stringByAppendingPathComponent:@"storeses.data"];
 }
 
+-(void)getCompanyQuoteWithDelegate:(id<DataAccessDelegate>)delegate
+{
+    
+    self.quoteUrl = [self.quoteUrl stringByAppendingString:@"&f=a"];
+    
+    NSURL * url = [NSURL URLWithString:self.quoteUrl];
+    
+    AFHTTPRequestOperation* reuquestQuotes = [[AFHTTPRequestOperation alloc]initWithRequest:[NSURLRequest requestWithURL:url]];
+    
+    
+    [reuquestQuotes setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject){
+        
+        NSString * text = [[NSString alloc] initWithData: responseObject encoding: NSUTF8StringEncoding];
+        self.companyQuoteArray = [text componentsSeparatedByString:@"\n"];
+        [text release];
+        int i = 0;
+        int j = 0;
+        
+        while (j < [self.companyList count])
+        {
+            Company* company = [self.companyList objectAtIndex:j];
+            
+            if(company.compnayCode != nil)
+            {
+                company.compnayStockPrice = [self.companyQuoteArray objectAtIndex:i];
+                i++;
+            }
+            j++;
+            
+        }
+        [delegate reload];
+        [reuquestQuotes release];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Couldn't connect to stock market!");
+    }];
+    [reuquestQuotes start];
+    
+    
+}
+
 -(NSUInteger)getNumberOfCompanies
 {
     
@@ -397,7 +375,7 @@ static DataAccess *sharedDataAccess = nil;
     [self.companyList removeObjectAtIndex: companyToDelete];
     
     
-      }
+}
 
 -(Company*)getCompany :(NSUInteger)companyIndex
 {
@@ -458,9 +436,9 @@ static DataAccess *sharedDataAccess = nil;
         urlString = [urlString stringByAppendingString:company.compnayCode];
         urlString = [urlString stringByAppendingString:@"&f=a"];
     
-    NSURL * url = [NSURL URLWithString:urlString];
+        NSURL * url = [NSURL URLWithString:urlString];
         
-     AFHTTPRequestOperation* reuquestQuotes = [[AFHTTPRequestOperation alloc]initWithRequest:[NSURLRequest requestWithURL:url]];
+        AFHTTPRequestOperation* reuquestQuotes = [[AFHTTPRequestOperation alloc]initWithRequest:[NSURLRequest requestWithURL:url]];
         
         [reuquestQuotes setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject){
                                                              
@@ -468,14 +446,16 @@ static DataAccess *sharedDataAccess = nil;
         NSString * text = [[NSString alloc] initWithData: responseObject encoding: NSUTF8StringEncoding];
                                                                  company.compnayStockPrice = text;
                                                                  [delegate reload];
+            [reuquestQuotes release];
                                                                  
-        }
-        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    }
+    failure:^(AFHTTPRequestOperation *operation, NSError *error)
+    {
             NSLog(@"Couldn't connect to stock market!");
-        }
+    }
          
          ];
-    [reuquestQuotes start];
+        [reuquestQuotes start];
     
     }
     company.listOfCompanyProducts = [[NSMutableArray alloc]init];
@@ -483,6 +463,7 @@ static DataAccess *sharedDataAccess = nil;
     [self.companyList addObject:company];
     [self.companyCoreDataList addObject:commpanyCd];
     [company release];
+
 }
 
 -(void)addProductToCompany : (NSString*)productName : (NSString*)productUrl : (Company*)company
@@ -572,9 +553,9 @@ static DataAccess *sharedDataAccess = nil;
     [self.companyList insertObject:companyToMove atIndex:toIndex];
     [self.companyCoreDataList insertObject:companyCdToMove atIndex:toIndex];
     
-    for (int i =0 ; i<[self.companyList count]; i++) {
+    for (int i =0 ; i<[self.companyList count]; i++)
+    {
         NSNumber *rowIndex = [NSNumber numberWithInt:i+1];
-        
         Company* temp = [self.companyList objectAtIndex:i];
         CompanyCd* companyTempToMove = [self.companyCoreDataList objectAtIndex:i];
         [companyTempToMove setValue:rowIndex forKey:@"companyCdRowIndex"];
@@ -618,7 +599,9 @@ static DataAccess *sharedDataAccess = nil;
 {
     NSError *err = nil;
     BOOL successful = [context save:&err];
-    if(!successful){
+    
+    if(!successful)
+    {
         NSLog(@"Error saving: %@", [err localizedDescription]);
     }
 
@@ -628,6 +611,10 @@ static DataAccess *sharedDataAccess = nil;
 - (void)dealloc {
 
     [super dealloc];
+    [_companyList release];
+    [_companyCoreDataList release];
+    [_companyQuoteArray release];
+    [_quoteUrl release];
 }
 
 @end

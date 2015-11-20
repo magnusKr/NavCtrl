@@ -16,25 +16,26 @@
 
 static NSString * const reuseIdentifier = @"Cell";
 
-
-
-
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
+    
     [super viewDidLoad];
     
-  
-     [NSTimer scheduledTimerWithTimeInterval:60.0 target:self selector:@selector(updateQuotes) userInfo:nil repeats:YES];
+    [self updateQuotes];
+    [NSTimer scheduledTimerWithTimeInterval:60.0 target:self selector:@selector(updateQuotes) userInfo:nil repeats:YES];
     
     [self.collectionView registerNib:[UINib nibWithNibName:@"CompanyCVCell" bundle:nil] forCellWithReuseIdentifier:reuseIdentifier];
     
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addCompany)];
     
-    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc]
                                           initWithTarget:self action:@selector(handleLongPress:)];
-    lpgr.minimumPressDuration = 1.0;
-    lpgr.delegate = self;
-    [self.collectionView addGestureRecognizer:lpgr];
+    longPressRecognizer.minimumPressDuration = 1.0;
+    longPressRecognizer.delegate = self;
+    [self.collectionView addGestureRecognizer:longPressRecognizer];
+    
+    [longPressRecognizer release];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -43,9 +44,9 @@ static NSString * const reuseIdentifier = @"Cell";
    [self reload];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)reload
@@ -53,19 +54,9 @@ static NSString * const reuseIdentifier = @"Cell";
     [self.collectionView reloadData];
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-#pragma mark <UICollectionViewDataSource>
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
     return 1;
 }
 
@@ -75,10 +66,12 @@ static NSString * const reuseIdentifier = @"Cell";
     return [[DataAccess sharedData] getNumberOfCompanies];
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
     
-      CompanyCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
-   cell.backgroundColor = [UIColor whiteColor];
+    CompanyCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
+   
+    cell.backgroundColor = [UIColor whiteColor];
     
     Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
     
@@ -86,78 +79,51 @@ static NSString * const reuseIdentifier = @"Cell";
     cell.companyName.text =  company.companyName;
     cell.companyQuote.text = company.compnayStockPrice;
     
-
-    
-    
     return cell;
 }
 
-#pragma mark <UICollectionViewDelegate>
-
-/*
-// Uncomment this method to specify if the specified item should be highlighted during tracking
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
-	return YES;
-}
-*/
-
-/*
-// Uncomment this method to specify if the specified item should be selected
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-*/
-
-/*
-// Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {
-	return NO;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	return NO;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	
-}
-*/
 
 - (void)collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-        Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
+    Company *company = [[DataAccess sharedData] getCompany:[indexPath row]];
     
-        self.childVC = [[ProductsCViewController alloc] initWithNibName:@"ProductsCViewController" bundle:nil];
+    self.productsViewController = [[ProductsCViewController alloc] initWithNibName:@"ProductsCViewController" bundle:nil];
 
-        self.childVC.company = company;
-        [self.navigationController pushViewController:self.childVC animated:YES];
-
+    self.productsViewController.company = company;
+    
+    [self.navigationController pushViewController:self.productsViewController animated:YES];
+    
+   
 }
 
 -(void) addCompany
 {
-    AddCompanyViewController *addCompanyVC = [[AddCompanyViewController alloc] initWithNibName:@"AddCompanyViewController" bundle:nil];
-    addCompanyVC.delegate = self;
+    self.addCompanyViewController = [[AddCompanyViewController alloc] initWithNibName:@"AddCompanyViewController" bundle:nil];
+    self.addCompanyViewController.delegate = self;
 
-    [self.navigationController pushViewController:addCompanyVC animated:YES];
+    [self.navigationController pushViewController:self.addCompanyViewController animated:YES];
 
-    [addCompanyVC release];
+
 }
 
-- (void)handleLongPress:(UILongPressGestureRecognizer*)gestureRecognizer{
+- (void)handleLongPress:(UILongPressGestureRecognizer*)gestureRecognizer
+{
     
-    if (gestureRecognizer.state != UIGestureRecognizerStateEnded) {
+    if (gestureRecognizer.state != UIGestureRecognizerStateEnded)
+    {
         return;
     }
     CGPoint p = [gestureRecognizer locationInView:self.collectionView];
     
     NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:p];
+    
     if (indexPath == nil)
     {
         NSLog(@"couldn't find index path");
     }
-    else {
+    else
+    {
 
         UIAlertController * alert=   [UIAlertController
                                       alertControllerWithTitle:@"Update Company"
@@ -179,12 +145,12 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
                                  handler:^(UIAlertAction * action)
                                  {
                                      
-                                EditCompanyViewController *editCompanyVC = [[EditCompanyViewController alloc] initWithNibName:@"EditCompanyViewController" bundle:nil];
-                                editCompanyVC.companyIndex = indexPath.row;
+                                self.editCompanyViewController = [[EditCompanyViewController alloc] initWithNibName:@"EditCompanyViewController" bundle:nil];
+                                self.editCompanyViewController.companyIndex = indexPath.row;
                                    
-                                [self.navigationController pushViewController:editCompanyVC animated:YES];
-                                [editCompanyVC release];
-                                     //[alert dismissViewControllerAnimated:YES completion:nil];
+                                [self.navigationController pushViewController:self.editCompanyViewController animated:YES];
+                                
+
                                      
                                  }];
         
@@ -201,6 +167,14 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
    
     [[DataAccess sharedData] getCompanyQuoteWithDelegate:self];
 
+}
+
+- (void)dealloc {
+    
+    [_productsViewController release];
+    [_addCompanyViewController release];
+    [_editCompanyViewController release];
+    [super dealloc];
 }
 
 @end

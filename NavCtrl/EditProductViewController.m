@@ -14,12 +14,13 @@
 
 @implementation EditProductViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:(BOOL)animated];
     Product *product;
     product = [self.company.listOfCompanyProducts objectAtIndex:self.productIndex];
@@ -29,13 +30,14 @@
 }
 
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 
-- (IBAction)updateProductButton:(id)sender {
+- (IBAction)updateProductButton:(id)sender
+{
     
     Product *product;
     product = [self.company.listOfCompanyProducts objectAtIndex:self.productIndex];
@@ -49,17 +51,8 @@
         [self.navigationController popViewControllerAnimated:YES];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-- (void)dealloc {
+- (void)dealloc
+{
     [_productImage release];
     [_productName release];
     [_productUrl release];

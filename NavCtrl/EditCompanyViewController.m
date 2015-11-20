@@ -14,14 +14,13 @@
 
 @implementation EditCompanyViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    
-    
-    // Do any additional setup after loading the view from its nib.
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     
     self.company = [[DataAccess sharedData] getCompany:self.companyIndex];
     self.companyName.text = self.company.companyName;
@@ -31,7 +30,8 @@
     self.stockPrice.text = self.company.compnayStockPrice;
 }
 
-- (IBAction)updateCompanyButton:(id)sender {
+- (IBAction)updateCompanyButton:(id)sender
+{
  
     self.company.companyName = self.companyName.text;
     self.company.companyLogo = self.companyLogoUrl.text;
@@ -46,22 +46,14 @@
 }
 
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-- (void)dealloc {
+- (void)dealloc
+{
     [_companyName release];
     [_companyLogo release];
     [_companyLogoUrl release];

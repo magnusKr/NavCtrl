@@ -16,11 +16,10 @@
 
 static NSString * const reuseIdentifier = @"Cell";
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void)viewDidLoad
+{
     
-    // Uncomment the following line to preserve selection between presentations
-    // self.clearsSelectionOnViewWillAppear = NO;
+    [super viewDidLoad];
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:@"ProductsCVCell" bundle:nil] forCellWithReuseIdentifier:reuseIdentifier];
@@ -28,24 +27,27 @@ static NSString * const reuseIdentifier = @"Cell";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addProduct)];
     
     
-    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc]
                                           initWithTarget:self action:@selector(handleLongPress:)];
-    lpgr.minimumPressDuration = 1.0;
-    lpgr.delegate = self;
-    [self.collectionView addGestureRecognizer:lpgr];
+    longPressRecognizer.minimumPressDuration = 1.0;
+    longPressRecognizer.delegate = self;
+    [self.collectionView addGestureRecognizer:longPressRecognizer];
+    
+    [longPressRecognizer release];
 }
 
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     self.title = self.company.companyName;
     [self reload];
 
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)reload
@@ -53,37 +55,26 @@ static NSString * const reuseIdentifier = @"Cell";
     [self.collectionView reloadData];
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-#pragma mark <UICollectionViewDataSource>
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
     return 1;
 }
 
 
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
     return[self.company.listOfCompanyProducts count];
 
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-    
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
     ProductsCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     
     cell.backgroundColor = [UIColor whiteColor];
     
     Product *product = [self.company.listOfCompanyProducts objectAtIndex: indexPath.row];
-    
     [cell.productImage setImage:[UIImage imageNamed:product.productImage]];
     cell.productName.text = product.productName;
 
@@ -95,79 +86,41 @@ static NSString * const reuseIdentifier = @"Cell";
 
 -(void) addProduct
 {
-    AddProductViewController *addProductVC = [[AddProductViewController alloc] initWithNibName:@"AddProductViewController" bundle:nil];
+    self.addProductViewController = [[AddProductViewController alloc] initWithNibName:@"AddProductViewController" bundle:nil];
     
-    addProductVC.company = self.company;
+    self.addProductViewController.company = self.company;
     
-    [self.navigationController pushViewController:addProductVC animated:YES];
-    
-    [addProductVC release];
-    
+    [self.navigationController pushViewController:self.addProductViewController animated:YES];
+
 }
 
 
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ProductViewController *detailViewController = [[ProductViewController alloc] initWithNibName:@"ProductViewController" bundle:nil];
+    self.productDetailsViewController = [[[ProductDetailsViewController alloc] initWithNibName:@"ProductDetailsViewController" bundle:nil] autorelease];
     
     Product *product = [self.company.listOfCompanyProducts objectAtIndex:indexPath.row];
     
+    self.productDetailsViewController.productUrlToLoad =  product.productUrl;
     
-    detailViewController.someUrlToLoad =  product.productUrl;
+    [self.navigationController pushViewController:self.productDetailsViewController animated:YES];
     
-    [self.navigationController pushViewController:detailViewController animated:YES];
+}
+
+- (void)handleLongPress:(UILongPressGestureRecognizer*)gestureRecognizer
+{
     
-    
-    //[detailViewController release];
-
-}
-
-#pragma mark <UICollectionViewDelegate>
-
-/*
-// Uncomment this method to specify if the specified item should be highlighted during tracking
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
-	return YES;
-}
-*/
-
-/*
-// Uncomment this method to specify if the specified item should be selected
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-*/
-
-/*
-// Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {
-	return NO;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	return NO;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	
-}
-*/
-
-
-- (void)handleLongPress:(UILongPressGestureRecognizer*)gestureRecognizer{
-    
-    if (gestureRecognizer.state != UIGestureRecognizerStateEnded) {
+    if (gestureRecognizer.state != UIGestureRecognizerStateEnded){
         return;
     }
     CGPoint p = [gestureRecognizer locationInView:self.collectionView];
     
     NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:p];
-    if (indexPath == nil)
-    {
+    
+    if (indexPath == nil){
         NSLog(@"couldn't find index path");
-    }
-    else {
+    }else{
         
         UIAlertController * alert=   [UIAlertController
                                       alertControllerWithTitle:@"Update Product"
@@ -189,23 +142,30 @@ static NSString * const reuseIdentifier = @"Cell";
                                  handler:^(UIAlertAction * action)
                                  {
                                      
-                                     EditProductViewController *editProductVC = [[EditProductViewController alloc] initWithNibName:@"EditProductViewController" bundle:nil];
-                                     editProductVC.productIndex = indexPath.row;
-                                     editProductVC.company = self.company;
-                                     [self.navigationController pushViewController:editProductVC animated:YES];
-                                     [editProductVC release];
-                                     //[alert dismissViewControllerAnimated:YES completion:nil];
+                                     self.editProductViewController = [[EditProductViewController alloc] initWithNibName:@"EditProductViewController" bundle:nil];
+                                     self.editProductViewController.productIndex = indexPath.row;
+                                     self.editProductViewController.company = self.company;
+                                     [self.navigationController pushViewController:self.editProductViewController animated:YES];
+                                     
+
                                      
                                  }];
         
         [alert addAction:ok];
-        [alert addAction:cancel];
-        
+        [alert addAction:cancel];        
         [self presentViewController:alert animated:YES completion:nil];
 
-        
-        
     }
+}
+
+
+- (void)dealloc {
+    
+    [_company release];
+    [_editProductViewController release];
+    [_productDetailsViewController release];
+    [_addProductViewController release];
+    [super dealloc];
 }
 
 

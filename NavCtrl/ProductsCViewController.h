@@ -11,10 +11,17 @@
 #import "ProductsCVCell.h"
 #import "AddProductViewController.h"
 #import "EditProductViewController.h"
-#import "ProductViewController.h"
+#import "ProductDetailsViewController.h"
 
+@class EditProductViewController;
+@class Company;
+@class ProductDetailsViewController;
+@class AddProductViewController;
 
 @interface ProductsCViewController : UICollectionViewController <UIGestureRecognizerDelegate>
 @property (nonatomic, retain) Company* company;
+@property (nonatomic, retain) EditProductViewController* editProductViewController;
+@property (nonatomic, retain) ProductDetailsViewController* productDetailsViewController;
+@property (nonatomic, retain) AddProductViewController* addProductViewController;
 
 @end
